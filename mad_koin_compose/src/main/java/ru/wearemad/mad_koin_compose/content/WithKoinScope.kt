@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getKoin
+import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.scope.Scope
 import ru.wearemad.mad_compose_navigation.navigator.base.Navigator
 import ru.wearemad.mad_compose_navigation.navigator.nested.NestedNavigator
@@ -57,6 +58,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     screenId: String,
     vmClass: KClass<Vm>,
     modifier: Modifier = Modifier,
+    vmParameters: ParametersDefinition? = null,
     snackContent: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
     content: @Composable Scope.(vm: Vm) -> Unit,
 ) {
@@ -65,7 +67,8 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
 
     val vm = scope.getScopedViewModelByClass(
         viewModelId = screenId,
-        vmClass = vmClass
+        vmClass = vmClass,
+        parameters = vmParameters
     )
     SubscribeToLifecycle(vm)
 
@@ -126,6 +129,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     screenId: String,
     vmClass: KClass<Vm>,
     modifier: Modifier = Modifier,
+    vmParameters: ParametersDefinition? = null,
     snackContent: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
     onBackPressedDispatcher: OnBackPressedDispatcher? = LocalRootBackPressedDispatcher.current,
     content: @Composable Scope.(NestedNavigator, Vm) -> Unit,
@@ -144,7 +148,8 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
 
     val vm = scope.getScopedViewModelByClass(
         viewModelId = screenId,
-        vmClass = vmClass
+        vmClass = vmClass,
+        parameters = vmParameters
     )
     SubscribeToLifecycle(vm)
 
