@@ -1,0 +1,74 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'maven-publish'
+}
+
+apply from: '../config.gradle'
+
+android {
+    compileSdkVersion project.compileSdk
+
+    defaultConfig {
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode project.vCode
+        versionName project.vName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+        useIR = true
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion project.composeVersion
+    }
+}
+
+dependencies {
+
+    implementation "androidx.activity:activity-compose:$composeActivityVersion"
+    implementation "androidx.compose.runtime:runtime:$composeVersion"
+
+    implementation "androidx.compose.material:material:$composeVersion"
+
+    api "com.github.TooLazyy:mad-basic:$madBasicVersion"
+    api "com.github.TooLazyy:mad-navigation-compose:$madComposeNavigationVersion"
+    api "com.github.TooLazyy:mad-core-compose:$madComposeCoreVersion"
+
+    api "io.insert-koin:koin-core:$koinVersion"
+    api "io.insert-koin:koin-android:$koinVersion"
+    api "io.insert-koin:koin-androidx-compose:$koinVersion"
+
+    api "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+            }
+        }
+    }
+}
