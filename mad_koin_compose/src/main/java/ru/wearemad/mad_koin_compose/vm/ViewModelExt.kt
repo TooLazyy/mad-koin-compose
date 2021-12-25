@@ -33,6 +33,28 @@ inline fun <reified T : ViewModel> Scope.getScopedViewModel(
     }
 }
 
+@Composable
+fun <T : ViewModel> Scope.getScopedViewModelByClass(
+    viewModelId: String,
+    vmClass: KClass<T>,
+    qualifier: Qualifier? = null,
+    owner: ViewModelOwner = ViewModelOwner.from(
+        LocalComposeScreenViewModelStoreHolder.current.getOrCreateScreenVmOwner(viewModelId),
+        LocalContext.current as ComponentActivity,
+    ),
+    parameters: ParametersDefinition? = null,
+): T {
+    return remember(viewModelId, qualifier, parameters) {
+        getViewModel(
+            qualifier,
+            viewModelId,
+            { owner },
+            vmClass,
+            parameters = parameters
+        )
+    }
+}
+
 inline fun <reified T : ViewModel> Scope.getViewModel(
     qualifier: Qualifier? = null,
     viewModelId: String,
