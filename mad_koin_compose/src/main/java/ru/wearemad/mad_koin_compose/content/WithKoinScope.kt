@@ -22,6 +22,7 @@ import ru.wearemad.mad_core_compose.vm.state.ViewState
 import ru.wearemad.mad_koin_compose.router.back_press.LocalRootBackPressedDispatcher
 import ru.wearemad.mad_koin_compose.router.rememberNestedNavigator
 import ru.wearemad.mad_koin_compose.scopes.LocalOpenedScopesHolder
+import ru.wearemad.mad_koin_compose.scopes.ScreenScope
 import ru.wearemad.mad_koin_compose.vm.getScopedViewModelByClass
 import kotlin.reflect.KClass
 
@@ -35,10 +36,10 @@ fun WithKoinScope(
     snackContent: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
     content: @Composable Scope.() -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<Scope>(screenId)
+    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
     UpdateOpenedScopes(screenId)
 
-    val snackbarHostState = rememberSnackbarHostState(holder = get())
+    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content()
@@ -62,7 +63,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     snackContent: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
     content: @Composable Scope.(vm: Vm) -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<Scope>(screenId)
+    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
     UpdateOpenedScopes(screenId)
 
     val vm = scope.getScopedViewModelByClass(
@@ -72,7 +73,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     )
     SubscribeToLifecycle(vm)
 
-    val snackbarHostState = rememberSnackbarHostState(holder = get())
+    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content(vm)
@@ -96,7 +97,7 @@ fun WithKoinScopeFlow(
     onBackPressedDispatcher: OnBackPressedDispatcher? = LocalRootBackPressedDispatcher.current,
     content: @Composable Scope.(NestedNavigator) -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<Scope>(screenId)
+    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
     UpdateOpenedScopes(screenId)
 
     val routerProviderHolder = get<DefaultRouterProvidersHolder>()
@@ -108,7 +109,7 @@ fun WithKoinScopeFlow(
         factory = { createAppNestedNavigator() }
     )
 
-    val snackbarHostState = rememberSnackbarHostState(holder = get())
+    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content(nestedNavigator)
@@ -134,7 +135,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     onBackPressedDispatcher: OnBackPressedDispatcher? = LocalRootBackPressedDispatcher.current,
     content: @Composable Scope.(NestedNavigator, Vm) -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<Scope>(screenId)
+    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
     UpdateOpenedScopes(screenId)
 
     val routerProviderHolder = get<DefaultRouterProvidersHolder>()
@@ -153,7 +154,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     )
     SubscribeToLifecycle(vm)
 
-    val snackbarHostState = rememberSnackbarHostState(holder = get())
+    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content(nestedNavigator, vm)
