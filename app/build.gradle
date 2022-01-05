@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
 }
 
 apply from: '../config.gradle'
@@ -48,6 +49,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "androidx.activity:activity-compose:$composeActivityVersion"
     implementation "androidx.compose.runtime:runtime:$composeVersion"
+    implementation "androidx.compose.material:material:$composeVersion"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

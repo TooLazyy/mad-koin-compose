@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
 import ru.wearemad.mad_compose_navigation.navigator.base.Navigator
 import ru.wearemad.mad_compose_navigation.navigator.base.NavigatorState
+import ru.wearemad.mad_compose_navigation.navigator.impl.RootNavigator
 import ru.wearemad.mad_compose_navigation.navigator.nested.NestedNavigator
 import ru.wearemad.mad_compose_navigation.router.holder.RouterNavigatorHolder
 import ru.wearemad.mad_compose_navigation.router.provider.RouterProvidersHolder
@@ -35,7 +36,7 @@ import ru.wearemad.mad_koin_compose.scopes.OpenedScopesHolder
 fun rememberNavigator(
     navigatorHolder: RouterNavigatorHolder,
     onBackPressedDispatcher: OnBackPressedDispatcher? = null,
-    navigatorFactory: () -> Navigator,
+    navigatorFactory: () -> RootNavigator,
     nestedNavigatorFactory: () -> NestedNavigator,
 ): Navigator {
     val factory = remember(onBackPressedDispatcher) {
@@ -123,9 +124,9 @@ private fun AttachNavigatorToLifecycle(
 }
 
 private fun createNavigatorSaver(
-    navigatorFactory: () -> Navigator,
+    navigatorFactory: () -> RootNavigator,
     nestedNavigatorFactory: () -> NestedNavigator,
-): Saver<Navigator, Bundle> = Saver(
+): Saver<RootNavigator, Bundle> = Saver(
     save = {
         it.saveState()
     },
