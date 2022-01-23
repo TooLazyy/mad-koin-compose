@@ -27,8 +27,8 @@ ext {
 
     //mad
     madBasicVersion = '1.0.5'
-    madComposeNavigationVersion = '1.0.1'
-    madComposeCoreVersion = '1.0.0'
+    madComposeNavigationVersion = '1.0.3'
+    madComposeCoreVersion = '1.0.1'
 
     //koin
     koinVersion= "3.1.4"

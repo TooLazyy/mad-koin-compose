@@ -4,31 +4,50 @@ import org.koin.dsl.module
 import ru.wearemad.mad_base.coroutines.DefaultDispatchersProvider
 import ru.wearemad.mad_core_compose.message.ComposeMessageControllerProvider
 import ru.wearemad.mad_core_compose.message.wrapper.DefaultComposeMessageControllerWrapper
+import ru.wearemad.mad_core_compose.result_handler.DefaultRequestResultStore
+import ru.wearemad.mad_core_compose.result_handler.RequestResultStore
 import ru.wearemad.mad_core_compose.vm.dependencies.DefaultVmDependencies
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.lifecycle.DefaultScreenLifecycleObserver
+import ru.wearemad.mad_core_compose.vm.result_listener.DefaultVmRequestResultHandler
 import ru.wearemad.mad_koin_compose.scopes.ScreenScope
 
 val vmModule = module {
+
+    single<RequestResultStore> { DefaultRequestResultStore() }
 
     scope<ScreenScope> {
 
         scoped<VmDependencies> {
             val provider = get<ComposeMessageControllerProvider<DefaultComposeMessageControllerWrapper>>()
+            val dispatchers = DefaultDispatchersProvider()
+            val lifecycleObserver = DefaultScreenLifecycleObserver()
             DefaultVmDependencies(
-                DefaultDispatchersProvider(),
+                dispatchers,
                 provider.messageController,
-                DefaultScreenLifecycleObserver()
+                lifecycleObserver,
+                DefaultVmRequestResultHandler(
+                    dispatchers,
+                    get(),
+                    lifecycleObserver
+                )
             )
         }
     }
 
     factory<VmDependencies> {
         val provider = get<ComposeMessageControllerProvider<DefaultComposeMessageControllerWrapper>>()
+        val dispatchers = DefaultDispatchersProvider()
+        val lifecycleObserver = DefaultScreenLifecycleObserver()
         DefaultVmDependencies(
-            DefaultDispatchersProvider(),
+            dispatchers,
             provider.messageController,
-            DefaultScreenLifecycleObserver()
+            lifecycleObserver,
+            DefaultVmRequestResultHandler(
+                dispatchers,
+                get(),
+                lifecycleObserver
+            )
         )
     }
 }

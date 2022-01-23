@@ -1,6 +1,7 @@
 package ru.wearemad.mad_koin_compose.screens.splash
 
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.wearemad.mad_compose_navigation.router.Router
 import ru.wearemad.mad_compose_navigation.router.add
@@ -54,6 +56,16 @@ class SplashVm(
     SplashState(),
     deps,
 ) {
+
+    init {
+        launch {
+            resultsFlow
+                .collect {
+                    Log.d("MIINE", "Splash new result data: $it")
+                }
+        }
+        registerResultKeys("key_1")
+    }
 
     fun onClicked() {
         dependencies.messageController.showSnack(

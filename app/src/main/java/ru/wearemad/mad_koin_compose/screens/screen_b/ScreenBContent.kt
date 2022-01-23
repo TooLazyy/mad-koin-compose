@@ -1,6 +1,7 @@
 package ru.wearemad.mad_koin_compose.screens.screen_b
 
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,9 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import org.koin.core.parameter.parametersOf
 import ru.wearemad.mad_compose_navigation.router.Router
-import ru.wearemad.mad_compose_navigation.router.add
+import ru.wearemad.mad_compose_navigation.router.back
 import ru.wearemad.mad_compose_navigation.router.newRoot
 import ru.wearemad.mad_compose_navigation.router.provider.DefaultRouterProvidersHolder
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
@@ -80,8 +82,10 @@ class ScreenBVm(
         get() = holder.getOrCreateRouter(scopeId)
 
     fun onRootClicked() {
+        setResult("key_1", ScreenBResult("from screen a"))
         viewModelScope.launch {
-            globalRouter.add(ScreenBRoute())
+            globalRouter.back()
+            //globalRouter.add(ScreenBRoute())
         }
     }
 
@@ -91,3 +95,8 @@ class ScreenBVm(
         }
     }
 }
+
+@Parcelize
+class ScreenBResult(
+    val someValue: String
+) : Parcelable

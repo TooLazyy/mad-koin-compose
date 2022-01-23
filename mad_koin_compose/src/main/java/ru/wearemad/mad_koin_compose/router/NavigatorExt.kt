@@ -139,7 +139,10 @@ private fun createNavigatorSaver(
 private fun flattenNavigatorBackStack(rootState: NavigatorState): List<String> {
     val selfScreensIds = rootState
         .currentStack
-        .map { it.screenKey }
+        .map { it.screenKey } +
+            rootState
+                .currentDialogsStack
+                .map { it.screenKey }
     return selfScreensIds + rootState.nestedNavigatorsState
         .map { flattenNavigatorBackStack(it.state) }
         .flatten()
@@ -165,8 +168,8 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
             .collect { scopesToClose ->
                 scopesToClose.forEach {
                     openedScopesHolder.removeScreenScope(it)
-                    val scope = getKoin().getScope(it)
-                    if (scope.isNotClosed()) {
+                    val scope = getKoin().getScopeOrNull(it)
+                    if (scope?.isNotClosed() == true) {
                         scope.close()
                     }
                     routerProviderHolder.remove(it)

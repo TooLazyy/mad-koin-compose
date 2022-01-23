@@ -8,6 +8,7 @@ import org.koin.core.logger.Level
 import ru.wearemad.mad_koin_compose.di.messageControllerModule
 import ru.wearemad.mad_koin_compose.di.navigationModule
 import ru.wearemad.mad_koin_compose.di.vmModule
+import ru.wearemad.mad_koin_compose.screens.common_alert.commonAlertModule
 import ru.wearemad.mad_koin_compose.screens.main.mainModule
 import ru.wearemad.mad_koin_compose.screens.screen_a.screenAModule
 import ru.wearemad.mad_koin_compose.screens.screen_b.child.subScreenBModule
@@ -31,6 +32,7 @@ class KoinComposeApp : Application() {
                     splashModule,
                     screenBModule,
                     subScreenBModule,
+                    commonAlertModule,
                 )
             )
         }
