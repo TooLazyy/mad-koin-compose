@@ -7,8 +7,8 @@ ext {
     targetSdk = 31
 
     //version
-    vCode = 1
-    vName = "1.0.0"
+    vCode = 2
+    vName = "1.0.1"
 
     //gradle
     gradleVersion = '7.0.4'
