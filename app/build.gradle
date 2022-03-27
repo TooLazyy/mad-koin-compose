@@ -46,7 +46,13 @@ dependencies {
 
     implementation project (':mad_koin_compose')
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesAndroidVersion"
+
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
+
     implementation "androidx.activity:activity-compose:$composeActivityVersion"
     implementation "androidx.compose.runtime:runtime:$composeVersion"
     implementation "androidx.compose.material:material:$composeVersion"

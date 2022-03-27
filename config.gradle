@@ -7,29 +7,30 @@ ext {
     targetSdk = 31
 
     //version
-    vCode = 2
-    vName = "1.0.1"
+    vCode = 3
+    vName = "1.0.2"
 
     //gradle
     gradleVersion = '7.0.4'
 
     //kotlin
-    kotlinVersion = '1.5.31'
-    ktxVersion = '1.7.0'
+    kotlinVersion = '1.6.10'
+    kotlinCoroutinesVersion = '1.6.0'
+    kotlinCoroutinesAndroidVersion = '1.6.0'
 
     //app compat
-    appCompatVersion = '1.4.0'
-    lifecycleVersion = '2.4.0'
+    appCompatVersion = '1.4.1'
+    lifecycleVersion = '2.4.1'
 
     //compose
-    composeVersion = '1.0.5'
+    composeVersion = '1.1.1'
     composeActivityVersion = '1.4.0'
 
     //mad
-    madBasicVersion = '1.0.5'
-    madComposeNavigationVersion = '1.0.3'
-    madComposeCoreVersion = '1.0.1'
+    madBasicVersion = '1.0.6'
+    madComposeNavigationVersion = '1.0.4'
+    madComposeCoreVersion = '1.0.2'
 
     //koin
-    koinVersion= "3.1.4"
+    koinVersion= "3.1.5"
 }
