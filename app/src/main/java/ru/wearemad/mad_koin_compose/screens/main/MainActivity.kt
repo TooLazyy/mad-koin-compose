@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.staticCompositionLocalOf
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.wearemad.mad_compose_navigation.navigator.base.Navigator
 import ru.wearemad.mad_compose_navigation.router.holder.RouterNavigatorHolder
@@ -31,7 +32,7 @@ val LocalRootNavigator = staticCompositionLocalOf<Navigator> {
 
 class MainActivity : AppCompatActivity() {
 
-    private val vm: MainActivityVm by viewModel()
+    private val vm: MainActivityVm by stateViewModel()
 
     private val routerProvidersHolder: DefaultRouterProvidersHolder by inject()
     private val navigatorHolder: RouterNavigatorHolder by inject()

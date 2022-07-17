@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.wearemad.mad_compose_navigation.router.Router
 import ru.wearemad.mad_compose_navigation.router.add

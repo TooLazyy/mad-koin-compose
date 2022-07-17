@@ -49,7 +49,7 @@ data class ScreenAState(
 
 class ScreenAVm(
     deps: VmDependencies,
-    private val globalRouter: Router
+    private val globalRouter: Router,
 ) : BaseVm<ScreenAState, VmEvent>(
     ScreenAState(),
     deps

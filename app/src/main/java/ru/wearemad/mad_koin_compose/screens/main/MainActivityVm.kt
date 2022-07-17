@@ -21,7 +21,7 @@ class MainActivityVm(
     init {
         val wasCreatedOnce = savedStateHandle.get<Boolean>("created") ?: false
         if (wasCreatedOnce.not()) {
-            savedStateHandle.set("created", true)
+            savedStateHandle["created"] = true
             launch {
                 router.newRoot(SplashRoute())
             }
