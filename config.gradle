@@ -11,20 +11,22 @@ ext {
     vName = "1.0.2"
 
     //gradle
-    gradleVersion = '7.0.4'
+    gradleVersion = '7.2.0'
 
     //kotlin
-    kotlinVersion = '1.6.10'
+    kotlinVersion = '1.7.0'
     kotlinCoroutinesVersion = '1.6.0'
-    kotlinCoroutinesAndroidVersion = '1.6.0'
+    kotlinCoroutinesAndroidVersion = '1.6.1'
 
     //app compat
-    appCompatVersion = '1.4.1'
-    lifecycleVersion = '2.4.1'
+    appCompatVersion = '1.4.2'
+    lifecycleVersion = '2.5.0'
 
     //compose
-    composeVersion = '1.1.1'
-    composeActivityVersion = '1.4.0'
+    composeVersion = '1.2.0'
+    composeRuntimeVersion = '1.1.1'
+    composeMaterialVersion = '1.1.1'
+    composeActivityVersion = '1.5.0'
 
     //mad
     madBasicVersion = '1.0.6'
@@ -32,5 +34,5 @@ ext {
     madComposeCoreVersion = '1.0.2'
 
     //koin
-    koinVersion= "3.1.5"
+    koinVersion= "3.2.0"
 }

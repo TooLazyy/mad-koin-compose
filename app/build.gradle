@@ -32,7 +32,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11
-        useIR = true
     }
     buildFeatures {
         compose true
@@ -54,8 +53,8 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
 
     implementation "androidx.activity:activity-compose:$composeActivityVersion"
-    implementation "androidx.compose.runtime:runtime:$composeVersion"
-    implementation "androidx.compose.material:material:$composeVersion"
+    implementation "androidx.compose.runtime:runtime:$composeRuntimeVersion"
+    implementation "androidx.compose.material:material:$composeMaterialVersion"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
