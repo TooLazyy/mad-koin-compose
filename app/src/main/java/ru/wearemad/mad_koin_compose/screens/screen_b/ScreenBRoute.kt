@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.compose.runtime.Composable
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import ru.wearemad.mad_compose_navigation.route.Route
-import java.util.*
+import ru.wearemad.mad_compose_navigation.api.route.Route
+import java.util.UUID
 
 @Parcelize
 class ScreenBRoute(

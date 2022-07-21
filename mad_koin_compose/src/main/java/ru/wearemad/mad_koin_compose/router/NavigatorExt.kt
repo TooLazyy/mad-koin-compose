@@ -15,17 +15,17 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
-import ru.wearemad.mad_compose_navigation.navigator.base.Navigator
-import ru.wearemad.mad_compose_navigation.navigator.base.NavigatorState
-import ru.wearemad.mad_compose_navigation.navigator.impl.RootNavigator
-import ru.wearemad.mad_compose_navigation.navigator.nested.NestedNavigator
-import ru.wearemad.mad_compose_navigation.router.holder.RouterNavigatorHolder
-import ru.wearemad.mad_compose_navigation.router.provider.RouterProvidersHolder
+import ru.wearemad.mad_compose_navigation.api.navigator.Navigator
+import ru.wearemad.mad_compose_navigation.api.navigator.data.NavigatorState
+import ru.wearemad.mad_compose_navigation.api.navigator.navigator_factory.NavigatorFactory
+import ru.wearemad.mad_compose_navigation.api.navigator.navigator_factory.NavigatorFactoryParams
+import ru.wearemad.mad_compose_navigation.api.navigator.navigator_factory.NestedNavigatorFactory
+import ru.wearemad.mad_compose_navigation.api.router.RouterNavigatorHolder
+import ru.wearemad.mad_compose_navigation.api.router.RouterProvidersHolder
 import ru.wearemad.mad_core_compose.utils.rememberLifecycleObserver
 import ru.wearemad.mad_core_compose.vm.vm_store_holder.ComposeScreenViewModelStoreHolder
 import ru.wearemad.mad_core_compose.vm.vm_store_holder.LocalComposeScreenViewModelStoreHolder
@@ -36,19 +36,22 @@ import ru.wearemad.mad_koin_compose.scopes.OpenedScopesHolder
 fun rememberNavigator(
     navigatorHolder: RouterNavigatorHolder,
     onBackPressedDispatcher: OnBackPressedDispatcher? = null,
-    navigatorFactory: () -> RootNavigator,
-    nestedNavigatorFactory: () -> NestedNavigator,
+    navigatorFactory: NavigatorFactory,
 ): Navigator {
-    val factory = remember(onBackPressedDispatcher) {
-        navigatorFactory
+    val rootFactory = remember(onBackPressedDispatcher) {
+        {
+            navigatorFactory.create(
+                NavigatorFactoryParams.MainNavigatorParams("root")
+            )
+        }
     }
     val navigator = rememberSaveable(
         onBackPressedDispatcher,
         saver = createNavigatorSaver(
-            navigatorFactory = factory,
-            nestedNavigatorFactory = nestedNavigatorFactory
+            rootNavigatorProvider = rootFactory,
+            factory = navigatorFactory,
         ),
-        init = factory
+        init = rootFactory
     )
     val vmStoreHolder = LocalComposeScreenViewModelStoreHolder.current
     val routerProviderHolder = LocalRouterProvidersHolderProvider.current
@@ -75,8 +78,8 @@ fun Navigator.rememberNestedNavigator(
     navigatorHolder: RouterNavigatorHolder,
     key: String,
     onBackPressedDispatcher: OnBackPressedDispatcher? = null,
-    factory: () -> NestedNavigator
-): NestedNavigator {
+    factory: NestedNavigatorFactory
+): Navigator {
     val navigator = remember(this, key) {
         getOrCreateNestedNavigator(key, factory)
     }
@@ -124,15 +127,15 @@ private fun AttachNavigatorToLifecycle(
 }
 
 private fun createNavigatorSaver(
-    navigatorFactory: () -> RootNavigator,
-    nestedNavigatorFactory: () -> NestedNavigator,
-): Saver<RootNavigator, Bundle> = Saver(
+    rootNavigatorProvider: () -> Navigator,
+    factory: NavigatorFactory,
+): Saver<Navigator, Bundle> = Saver(
     save = {
         it.saveState()
     },
     restore = {
-        navigatorFactory()
-            .apply { restoreState(it, nestedNavigatorFactory) }
+        rootNavigatorProvider()
+            .apply { restoreState(it, factory) }
     }
 )
 
@@ -144,7 +147,7 @@ private fun flattenNavigatorBackStack(rootState: NavigatorState): List<String> {
                 .currentDialogsStack
                 .map { it.screenKey }
     return selfScreensIds + rootState.nestedNavigatorsState
-        .map { flattenNavigatorBackStack(it.state) }
+        .map { flattenNavigatorBackStack(it) }
         .flatten()
 }
 
@@ -157,8 +160,8 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
 ) {
     launch(Dispatchers.IO) {
         navigator
-            .navigatorStateFlow
-            .filter { it.stateChangedAtLeastOnce }
+            .stateFlow
+            .drop(1)
             .map(::flattenNavigatorBackStack)
             .map { screenIds ->
                 val openedScopes = openedScopesHolder.openedScopes

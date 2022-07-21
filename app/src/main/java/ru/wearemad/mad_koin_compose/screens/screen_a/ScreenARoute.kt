@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.compose.runtime.Composable
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import ru.wearemad.mad_compose_navigation.route.Route
+import ru.wearemad.mad_compose_navigation.api.route.Route
 
 @Parcelize
 class ScreenARoute : Route() {

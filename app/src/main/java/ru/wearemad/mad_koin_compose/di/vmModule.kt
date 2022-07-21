@@ -1,7 +1,7 @@
 package ru.wearemad.mad_koin_compose.di
 
 import org.koin.dsl.module
-import ru.wearemad.mad_base.coroutines.DefaultDispatchersProvider
+import ru.wearemad.mad_core_compose.dispatcher.DefaultDispatchersProvider
 import ru.wearemad.mad_core_compose.message.ComposeMessageControllerProvider
 import ru.wearemad.mad_core_compose.message.wrapper.DefaultComposeMessageControllerWrapper
 import ru.wearemad.mad_core_compose.result_handler.DefaultRequestResultStore

@@ -13,8 +13,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch
-import ru.wearemad.mad_compose_navigation.router.Router
-import ru.wearemad.mad_compose_navigation.router.add
+import ru.wearemad.mad_compose_navigation.impl.router.Router
+import ru.wearemad.mad_compose_navigation.impl.router.add
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.event.VmEvent

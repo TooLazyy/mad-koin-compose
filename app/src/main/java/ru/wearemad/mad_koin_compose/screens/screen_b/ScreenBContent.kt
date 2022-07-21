@@ -17,10 +17,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import org.koin.core.parameter.parametersOf
-import ru.wearemad.mad_compose_navigation.router.Router
-import ru.wearemad.mad_compose_navigation.router.back
-import ru.wearemad.mad_compose_navigation.router.newRoot
-import ru.wearemad.mad_compose_navigation.router.provider.DefaultRouterProvidersHolder
+import ru.wearemad.mad_compose_navigation.impl.router.DefaultRouterProvidersHolder
+import ru.wearemad.mad_compose_navigation.impl.router.Router
+import ru.wearemad.mad_compose_navigation.impl.router.back
+import ru.wearemad.mad_compose_navigation.impl.router.newRoot
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.event.VmEvent
@@ -42,7 +42,7 @@ fun ScreenBContent(id: String, args: Bundle?) {
         },
         vmClass = ScreenBVm::class,
         content = { nestedNavigator, vm ->
-            val nestedState = nestedNavigator.navigatorStateFlow.collectAsState()
+            val nestedState = nestedNavigator.stateFlow.collectAsState()
             val currentRoute = nestedState.value.currentRoute
             Box(
                 modifier = Modifier
