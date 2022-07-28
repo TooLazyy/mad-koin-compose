@@ -12,12 +12,11 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.staticCompositionLocalOf
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import ru.wearemad.mad_compose_navigation.navigator.base.Navigator
-import ru.wearemad.mad_compose_navigation.router.holder.RouterNavigatorHolder
-import ru.wearemad.mad_compose_navigation.router.provider.DefaultRouterProvidersHolder
-import ru.wearemad.mad_compose_navigation.utils.createAppNavigator
-import ru.wearemad.mad_compose_navigation.utils.createAppNestedNavigator
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import ru.wearemad.mad_compose_navigation.api.navigator.Navigator
+import ru.wearemad.mad_compose_navigation.api.navigator.navigator_factory.NavigatorFactory
+import ru.wearemad.mad_compose_navigation.api.router.RouterNavigatorHolder
+import ru.wearemad.mad_compose_navigation.impl.router.DefaultRouterProvidersHolder
 import ru.wearemad.mad_core_compose.result_handler.RequestResultStore
 import ru.wearemad.mad_core_compose.utils.noLocalProvidedFor
 import ru.wearemad.mad_koin_compose.content.ActivityContentWithProviders
@@ -31,11 +30,12 @@ val LocalRootNavigator = staticCompositionLocalOf<Navigator> {
 
 class MainActivity : AppCompatActivity() {
 
-    private val vm: MainActivityVm by viewModel()
+    private val vm: MainActivityVm by stateViewModel()
 
     private val routerProvidersHolder: DefaultRouterProvidersHolder by inject()
     private val navigatorHolder: RouterNavigatorHolder by inject()
     private val requestResultStore: RequestResultStore by inject()
+    private val navigatorFactory: NavigatorFactory by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +51,10 @@ class MainActivity : AppCompatActivity() {
                 val rootNavigator = rememberNavigator(
                     navigatorHolder = navigatorHolder,
                     onBackPressedDispatcher = onBackPressedDispatcher,
-                    navigatorFactory = { createAppNavigator() },
-                    nestedNavigatorFactory = { createAppNestedNavigator() },
+                    navigatorFactory = navigatorFactory,
                 )
+                var a = rootNavigator.hashCode()
+                a += 1
 
                 val requestResultStore = rememberRequestResultStore(requestResultStoreFactory)
 
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun RootScreen(savedInstanceState: Bundle?) {
         val rootNavigator = LocalRootNavigator.current
-        val rootNavigatorState = rootNavigator.navigatorStateFlow.collectAsState()
+        val rootNavigatorState = rootNavigator.stateFlow.collectAsState()
         val currentRoute = rootNavigatorState.value.currentRoute
         val dialogs = rootNavigatorState.value.currentDialogsStack
 

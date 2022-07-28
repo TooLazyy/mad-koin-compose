@@ -16,9 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.launch
 import org.koin.core.parameter.parametersOf
-import ru.wearemad.mad_compose_navigation.router.Router
-import ru.wearemad.mad_compose_navigation.router.add
-import ru.wearemad.mad_compose_navigation.router.provider.DefaultRouterProvidersHolder
+import ru.wearemad.mad_compose_navigation.impl.router.DefaultRouterProvidersHolder
+import ru.wearemad.mad_compose_navigation.impl.router.Router
+import ru.wearemad.mad_compose_navigation.impl.router.add
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.event.VmEvent

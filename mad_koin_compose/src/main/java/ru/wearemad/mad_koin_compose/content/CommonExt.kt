@@ -2,7 +2,7 @@ package ru.wearemad.mad_koin_compose.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
-import ru.wearemad.mad_compose_navigation.route.Route
+import ru.wearemad.mad_compose_navigation.api.route.Route
 
 /**
  * Invoke Route's content on SaveableStateHolder which allows to save state using rememberSaveable

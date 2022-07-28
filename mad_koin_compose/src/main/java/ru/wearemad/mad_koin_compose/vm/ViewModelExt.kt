@@ -1,15 +1,16 @@
 package ru.wearemad.mad_koin_compose.vm
 
-import androidx.activity.ComponentActivity
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.StateViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import org.koin.androidx.viewmodel.ViewModelOwner
-import org.koin.androidx.viewmodel.ViewModelOwnerDefinition
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.savedstate.SavedStateRegistryOwner
 import org.koin.androidx.viewmodel.ViewModelParameter
+import org.koin.androidx.viewmodel.ViewModelStoreOwnerProducer
 import org.koin.androidx.viewmodel.factory.DefaultViewModelFactory
 import org.koin.androidx.viewmodel.scope.BundleDefinition
 import org.koin.core.parameter.ParametersDefinition
@@ -22,15 +23,19 @@ import kotlin.reflect.KClass
 inline fun <reified T : ViewModel> Scope.getScopedViewModel(
     viewModelId: String,
     qualifier: Qualifier? = null,
-    owner: ViewModelOwner = ViewModelOwner.from(
-        LocalComposeScreenViewModelStoreHolder.current.getOrCreateScreenVmOwner(viewModelId),
-        LocalContext.current as ComponentActivity,
-    ),
+    noinline saveState: BundleDefinition = { Bundle() },
+    savedStateOwner: SavedStateRegistryOwner? = LocalContext.current as? SavedStateRegistryOwner,
+    owner: ViewModelStoreOwner = LocalComposeScreenViewModelStoreHolder.current.getOrCreateScreenVmOwner(viewModelId),
     noinline parameters: ParametersDefinition? = null,
-): T {
-    return remember(viewModelId, qualifier, parameters) {
-        getViewModel(qualifier, viewModelId, { owner }, parameters)
-    }
+): T = remember(viewModelId, qualifier, parameters) {
+    getViewModel(
+        viewModelId,
+        { owner },
+        qualifier,
+        parameters,
+        saveState,
+        savedStateOwner = savedStateOwner,
+    )
 }
 
 @Composable
@@ -38,49 +43,57 @@ fun <T : ViewModel> Scope.getScopedViewModelByClass(
     viewModelId: String,
     vmClass: KClass<T>,
     qualifier: Qualifier? = null,
-    owner: ViewModelOwner = ViewModelOwner.from(
-        LocalComposeScreenViewModelStoreHolder.current.getOrCreateScreenVmOwner(viewModelId),
-        LocalContext.current as ComponentActivity,
-    ),
+    saveState: BundleDefinition = { Bundle() },
+    savedStateOwner: SavedStateRegistryOwner? = LocalContext.current as? SavedStateRegistryOwner,
+    owner: ViewModelStoreOwner = LocalComposeScreenViewModelStoreHolder.current.getOrCreateScreenVmOwner(viewModelId),
     parameters: ParametersDefinition? = null,
-): T {
-    return remember(viewModelId, qualifier, parameters) {
-        getViewModel(
-            qualifier,
-            viewModelId,
-            { owner },
-            vmClass,
-            parameters = parameters
-        )
-    }
+): T = remember(viewModelId, qualifier, parameters) {
+    getViewModel(
+        viewModelId,
+        { owner },
+        vmClass,
+        qualifier,
+        parameters = parameters,
+        saveState = saveState,
+        savedStateOwner = savedStateOwner,
+    )
 }
 
 inline fun <reified T : ViewModel> Scope.getViewModel(
-    qualifier: Qualifier? = null,
     viewModelId: String,
-    noinline owner: ViewModelOwnerDefinition,
+    noinline owner: ViewModelStoreOwnerProducer,
+    qualifier: Qualifier? = null,
     noinline parameters: ParametersDefinition? = null,
-): T {
-    return getViewModel(qualifier, viewModelId, owner, T::class, parameters = parameters)
-}
+    noinline saveState: BundleDefinition = { Bundle() },
+    savedStateOwner: SavedStateRegistryOwner? = null
+): T = getViewModel(
+    viewModelId,
+    owner,
+    T::class,
+    qualifier = qualifier,
+    parameters = parameters,
+    saveState = saveState,
+    savedStateOwner = savedStateOwner,
+)
 
 fun <T : ViewModel> Scope.getViewModel(
-    qualifier: Qualifier? = null,
     viewModelId: String,
-    owner: ViewModelOwnerDefinition,
+    owner: ViewModelStoreOwnerProducer,
     clazz: KClass<T>,
-    state: BundleDefinition? = null,
+    qualifier: Qualifier? = null,
     parameters: ParametersDefinition? = null,
+    saveState: BundleDefinition? = { Bundle() },
+    savedStateOwner: SavedStateRegistryOwner? = null
 ): T {
     val ownerDef = owner()
     return getViewModel(
         ViewModelParameter(
             clazz,
             qualifier,
-            state,
+            saveState,
             parameters,
-            ownerDef.store,
-            ownerDef.stateRegistry
+            ownerDef,
+            registryOwner = savedStateOwner
         ),
         viewModelId
     )
@@ -91,7 +104,7 @@ internal fun <T : ViewModel> Scope.getViewModel(
     viewModelId: String,
 ): T {
     val viewModelProvider = ViewModelProvider(
-        viewModelParameters.viewModelStore,
+        viewModelParameters.viewModelStoreOwner,
         pickFactory(viewModelParameters)
     )
     return viewModelProvider.resolveInstance(

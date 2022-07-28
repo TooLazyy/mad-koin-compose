@@ -11,10 +11,9 @@ import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getKoin
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.scope.Scope
-import ru.wearemad.mad_compose_navigation.navigator.base.Navigator
-import ru.wearemad.mad_compose_navigation.navigator.nested.NestedNavigator
-import ru.wearemad.mad_compose_navigation.router.provider.DefaultRouterProvidersHolder
-import ru.wearemad.mad_compose_navigation.utils.createAppNestedNavigator
+import ru.wearemad.mad_compose_navigation.api.navigator.Navigator
+import ru.wearemad.mad_compose_navigation.api.navigator.navigator_factory.NestedNavigatorFactory
+import ru.wearemad.mad_compose_navigation.impl.router.DefaultRouterProvidersHolder
 import ru.wearemad.mad_core_compose.message.rememberSnackbarHostState
 import ru.wearemad.mad_core_compose.utils.SubscribeToLifecycle
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
@@ -105,18 +104,19 @@ fun WithKoinScopeFlow(
             state = snackbarHostState
         )
     },
-    content: @Composable Scope.(NestedNavigator) -> Unit,
+    content: @Composable Scope.(Navigator) -> Unit,
 ) {
     val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
     UpdateOpenedScopes(screenId)
 
+    val nestedNavigatorFactory = scope.get<NestedNavigatorFactory>()
     val routerProviderHolder = get<DefaultRouterProvidersHolder>()
     val navigatorHolder = routerProviderHolder.getOrCreateHolder(screenId)
     val nestedNavigator = rootNavigator.rememberNestedNavigator(
         navigatorHolder = navigatorHolder,
         key = screenId,
         onBackPressedDispatcher = onBackPressedDispatcher,
-        factory = { createAppNestedNavigator() }
+        factory = nestedNavigatorFactory
     )
 
     val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
@@ -145,18 +145,19 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
             state = snackbarHostState
         )
     },
-    content: @Composable Scope.(NestedNavigator, Vm) -> Unit,
+    content: @Composable Scope.(Navigator, Vm) -> Unit,
 ) {
     val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
     UpdateOpenedScopes(screenId)
 
+    val nestedNavigatorFactory = scope.get<NestedNavigatorFactory>()
     val routerProviderHolder = get<DefaultRouterProvidersHolder>()
     val navigatorHolder = routerProviderHolder.getOrCreateHolder(screenId)
     val nestedNavigator = rootNavigator.rememberNestedNavigator(
         navigatorHolder = navigatorHolder,
         key = screenId,
         onBackPressedDispatcher = onBackPressedDispatcher,
-        factory = { createAppNestedNavigator() }
+        factory = nestedNavigatorFactory,
     )
 
     val vm = scope.getScopedViewModelByClass(

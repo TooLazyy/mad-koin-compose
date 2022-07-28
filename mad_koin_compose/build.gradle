@@ -12,8 +12,6 @@ android {
     defaultConfig {
         minSdkVersion project.minSdk
         targetSdkVersion project.targetSdk
-        versionCode project.vCode
-        versionName project.vName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -31,7 +29,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11
-        useIR = true
     }
     buildFeatures {
         compose true
@@ -44,23 +41,18 @@ android {
 dependencies {
 
     implementation "androidx.activity:activity-compose:$composeActivityVersion"
-    implementation "androidx.compose.runtime:runtime:$composeVersion"
+    implementation "androidx.compose.runtime:runtime:$composeRuntimeVersion"
 
-    implementation "androidx.compose.material:material:$composeVersion"
+    implementation "androidx.compose.material:material:$composeMaterialVersion"
 
-    api "com.github.TooLazyy:mad-basic:$madBasicVersion"
+    implementation "io.insert-koin:koin-core:$koinVersion"
+    implementation "io.insert-koin:koin-android:$koinVersion"
+    implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
+
     api "com.github.TooLazyy:mad-navigation-compose:$madComposeNavigationVersion"
     api "com.github.TooLazyy:mad-core-compose:$madComposeCoreVersion"
-
-    api "io.insert-koin:koin-core:$koinVersion"
-    api "io.insert-koin:koin-android:$koinVersion"
-    api "io.insert-koin:koin-androidx-compose:$koinVersion"
-
-    api "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
-
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
 project.afterEvaluate {
