@@ -1,5 +1,4 @@
 ext {
-
     applicationName = "Koin Compose"
     appId = "ru.wearemad.mad_koin_compose"
     compileSdk = 32
@@ -11,7 +10,7 @@ ext {
     vName = "1.0.2"
 
     //gradle
-    gradleVersion = '7.2.0'
+    gradleVersion = '7.2.1'
 
     //kotlin
     kotlinVersion = '1.7.0'
@@ -29,8 +28,8 @@ ext {
     composeActivityVersion = '1.5.0'
 
     //mad
-    madComposeNavigationVersion = 'f2b593812f'//'1.0.4'
-    madComposeCoreVersion = 'refactoring-SNAPSHOT'//'1.0.2'
+    madComposeNavigationVersion = '1.0.5'
+    madComposeCoreVersion = '1.0.3'
 
     //koin
     koinVersion= "3.2.0"

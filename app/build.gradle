@@ -55,4 +55,8 @@ dependencies {
     implementation "androidx.activity:activity-compose:$composeActivityVersion"
     implementation "androidx.compose.runtime:runtime:$composeRuntimeVersion"
     implementation "androidx.compose.material:material:$composeMaterialVersion"
+
+    implementation "io.insert-koin:koin-core:$koinVersion"
+    implementation "io.insert-koin:koin-android:$koinVersion"
+    implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
 }

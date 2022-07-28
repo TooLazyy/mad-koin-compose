@@ -10,8 +10,9 @@ val screenBModule = module {
 
         scoped { (id: String) ->
             ScreenBVm(
-                get(), id,
-                get(), get()
+                get(), get(),
+                id, get(),
+                get()
             )
         }
 

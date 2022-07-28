@@ -45,14 +45,14 @@ dependencies {
 
     implementation "androidx.compose.material:material:$composeMaterialVersion"
 
+    implementation "io.insert-koin:koin-core:$koinVersion"
+    implementation "io.insert-koin:koin-android:$koinVersion"
+    implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
+
     api "com.github.TooLazyy:mad-navigation-compose:$madComposeNavigationVersion"
     api "com.github.TooLazyy:mad-core-compose:$madComposeCoreVersion"
-
-    api "io.insert-koin:koin-core:$koinVersion"
-    api "io.insert-koin:koin-android:$koinVersion"
-    api "io.insert-koin:koin-androidx-compose:$koinVersion"
-
-    api "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
 }
 
 project.afterEvaluate {
