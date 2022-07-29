@@ -53,9 +53,6 @@ class MainActivity : AppCompatActivity() {
                     onBackPressedDispatcher = onBackPressedDispatcher,
                     navigatorFactory = navigatorFactory,
                 )
-                var a = rootNavigator.hashCode()
-                a += 1
-
                 val requestResultStore = rememberRequestResultStore(requestResultStoreFactory)
 
                 ComposeNavigationTheme {

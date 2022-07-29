@@ -53,6 +53,7 @@ dependencies {
 
     api "com.github.TooLazyy:mad-navigation-compose:$madComposeNavigationVersion"
     api "com.github.TooLazyy:mad-core-compose:$madComposeCoreVersion"
+    api "com.github.TooLazyy:Mad-Utils:$madUtilsVersion"
 }
 
 project.afterEvaluate {
