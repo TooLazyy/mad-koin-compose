@@ -15,4 +15,6 @@ interface OpenedScopesHolder {
     fun saveState(): Bundle
 
     fun restoreState(inState: Bundle)
+
+    fun clearAll()
 }

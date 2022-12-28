@@ -1,7 +1,9 @@
 package ru.wearemad.mad_koin_compose.screens.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -19,9 +21,12 @@ import ru.wearemad.mad_compose_navigation.api.router.RouterNavigatorHolder
 import ru.wearemad.mad_compose_navigation.impl.router.DefaultRouterProvidersHolder
 import ru.wearemad.mad_core_compose.result_handler.RequestResultStore
 import ru.wearemad.mad_core_compose.utils.noLocalProvidedFor
+import ru.wearemad.mad_core_compose.vm.vm_store_holder.ComposeScreenViewModelStoreHolderVm
 import ru.wearemad.mad_koin_compose.content.ActivityContentWithProviders
 import ru.wearemad.mad_koin_compose.content.RenderRouteWithSaveableStateHolder
 import ru.wearemad.mad_koin_compose.router.rememberNavigator
+import ru.wearemad.mad_koin_compose.scopes.OpenedScopesHolder
+import ru.wearemad.mad_koin_compose.scopes.rememberOpenedScopesHolder
 import ru.wearemad.mad_koin_compose.theme.ComposeNavigationTheme
 
 val LocalRootNavigator = staticCompositionLocalOf<Navigator> {
@@ -36,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     private val navigatorHolder: RouterNavigatorHolder by inject()
     private val requestResultStore: RequestResultStore by inject()
     private val navigatorFactory: NavigatorFactory by inject()
+    private val openedScopesHolder: OpenedScopesHolder by inject()
+    private val composeScreenViewModelStoreHolder: ComposeScreenViewModelStoreHolderVm by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +53,9 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             ActivityContentWithProviders(
-                routerProvidersHolder = routerProvidersHolder
+                routerProvidersHolder = routerProvidersHolder,
+                openedScopesHolder = rememberOpenedScopesHolder { openedScopesHolder },
+                composeScreenViewModelStoreHolder = composeScreenViewModelStoreHolder,
             ) {
                 val rootNavigator = rememberNavigator(
                     navigatorHolder = navigatorHolder,
@@ -63,6 +72,16 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing) {
+            Log.d("MIINE", "finish")
+            composeScreenViewModelStoreHolder.clearAll()
+            openedScopesHolder.clearAll()
+            viewModelStore.clear()
         }
     }
 

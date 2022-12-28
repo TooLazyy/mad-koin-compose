@@ -1,6 +1,7 @@
 package ru.wearemad.mad_koin_compose.scopes
 
 import android.os.Bundle
+import android.util.Log
 
 class DefaultOpenedScopesHolder : OpenedScopesHolder {
 
@@ -13,6 +14,10 @@ class DefaultOpenedScopesHolder : OpenedScopesHolder {
 
     override val openedScopes: Set<String>
         get() = openedScopesSet.toSet()
+
+    init {
+        Log.d("MIINE", "DefaultOpenedScopesHolder init")
+    }
 
     override fun removeScreenScope(
         screenId: String
@@ -36,5 +41,10 @@ class DefaultOpenedScopesHolder : OpenedScopesHolder {
         openedScopesSet.addAll(
             scopes
         )
+    }
+
+    override fun clearAll() {
+        Log.d("MIINE", "DefaultOpenedScopesHolder clear")
+        openedScopesSet.clear()
     }
 }

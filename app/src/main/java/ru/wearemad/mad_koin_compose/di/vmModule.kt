@@ -9,10 +9,14 @@ import ru.wearemad.mad_core_compose.vm.dependencies.DefaultVmDependencies
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.lifecycle.DefaultScreenLifecycleObserver
 import ru.wearemad.mad_core_compose.vm.result_listener.DefaultVmRequestResultHandler
+import ru.wearemad.mad_koin_compose.scopes.DefaultOpenedScopesHolder
+import ru.wearemad.mad_koin_compose.scopes.OpenedScopesHolder
 import ru.wearemad.mad_koin_compose.scopes.ScreenScope
 import ru.wearemad.mad_utils.dispatcher.DefaultDispatchersProvider
 
 val vmModule = module {
+
+    single<OpenedScopesHolder> { DefaultOpenedScopesHolder() }
 
     single<RequestResultStore> { DefaultRequestResultStore() }
 

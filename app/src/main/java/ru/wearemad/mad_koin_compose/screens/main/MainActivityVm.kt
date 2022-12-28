@@ -22,7 +22,7 @@ class MainActivityVm(
     init {
         savedStateHandle.ifFlagNotSetBefore(
             actionIfNotSet = {
-                launch {
+                launch(deps.dispatchers.main()) {
                     router.newRoot(SplashRoute())
                 }
             }
