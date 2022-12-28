@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         if (isFinishing) {
-            Log.d("MIINE", "finish")
+            //TODO make auto release
             composeScreenViewModelStoreHolder.clearAll()
             openedScopesHolder.clearAll()
             viewModelStore.clear()

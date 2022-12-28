@@ -1,7 +1,6 @@
 package ru.wearemad.mad_koin_compose.router
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -99,39 +98,31 @@ private fun AttachNavigatorToLifecycle(
     onBackPressedDispatcher: OnBackPressedDispatcher? = null,
     launchEffectAction: CoroutineScope.() -> Unit,
 ) {
-    Log.d("MIINE", "AttachNavigatorToLifecycle")
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalContext.current as? LifecycleOwner
     val lifecycleObserver = rememberLifecycleObserver(
         key = onBackPressedDispatcher,
         onPause = {
-            Log.d("MIINE", "AttachNavigatorToLifecycle detach from pause: $navigator")
             navigatorHolder.detachNavigator()
         },
         onResume = {
             coroutineScope.launch {
-                Log.d("MIINE", "AttachNavigatorToLifecycle attach from resume")
                 navigatorHolder.attachNavigator(navigator)
             }
         }
     )
 
     suspend fun attachNavigator() {
-        Log.d("MIINE", "AttachNavigatorToLifecycle attach from launch: $navigator")
         navigatorHolder.attachNavigator(navigator)
         navigator.registerOnBackPressedCallback(onBackPressedDispatcher)
         lifecycleOwner?.lifecycle?.addObserver(lifecycleObserver)
     }
-    /*coroutineScope.launch(Dispatchers.Main.immediate) {
-        attachNavigator()
-    }*/
     LaunchedEffect(key1 = onBackPressedDispatcher) {
         attachNavigator()
         launchEffectAction()
     }
     DisposableEffect(onBackPressedDispatcher) {
         onDispose {
-            Log.d("MIINE", "AttachNavigatorToLifecycle detach from launch: $navigator")
             navigatorHolder.detachNavigator()
             navigator.unregisterOnBackPressedCallback()
             lifecycleOwner?.lifecycle?.removeObserver(lifecycleObserver)
@@ -177,8 +168,6 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
             .drop(1)
             .map(::flattenNavigatorBackStack)
             .map { screenIds ->
-                val ids = screenIds.joinToString()
-                Log.d("MIINE", "screens changed: $ids")
                 val openedScopes = openedScopesHolder.openedScopes
                 openedScopes
                     .filterNot { screenIds.contains(it) }
