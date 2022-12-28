@@ -37,4 +37,8 @@ class DefaultOpenedScopesHolder : OpenedScopesHolder {
             scopes
         )
     }
+
+    override fun clearAll() {
+        openedScopesSet.clear()
+    }
 }

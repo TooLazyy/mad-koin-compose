@@ -14,6 +14,8 @@ import ru.wearemad.mad_koin_compose.screens.screen_a.screenAModule
 import ru.wearemad.mad_koin_compose.screens.screen_b.child.subScreenBModule
 import ru.wearemad.mad_koin_compose.screens.screen_b.screenBModule
 import ru.wearemad.mad_koin_compose.screens.splash.splashModule
+import ru.wearemad.mad_koin_compose.screens.tabs_test.tab.tabsSubModule
+import ru.wearemad.mad_koin_compose.screens.tabs_test.tabsMainModule
 
 class KoinComposeApp : Application() {
 
@@ -33,6 +35,8 @@ class KoinComposeApp : Application() {
                     screenBModule,
                     subScreenBModule,
                     commonAlertModule,
+                    tabsMainModule,
+                    tabsSubModule
                 )
             )
         }

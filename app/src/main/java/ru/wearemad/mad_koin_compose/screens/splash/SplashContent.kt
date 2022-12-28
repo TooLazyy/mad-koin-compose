@@ -14,14 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch
 import ru.wearemad.mad_compose_navigation.impl.router.Router
-import ru.wearemad.mad_compose_navigation.impl.router.add
+import ru.wearemad.mad_compose_navigation.impl.router.newRoot
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.event.VmEvent
 import ru.wearemad.mad_core_compose.vm.state.LoadingState
 import ru.wearemad.mad_core_compose.vm.state.ViewState
 import ru.wearemad.mad_koin_compose.content.WithKoinScopedVm
-import ru.wearemad.mad_koin_compose.screens.screen_a.ScreenARoute
+import ru.wearemad.mad_koin_compose.screens.tabs_test.TabsMainRoute
 
 @Composable
 fun SplashContent(
@@ -73,8 +73,8 @@ class SplashVm(
             SnackbarDuration.Indefinite
         ) {
             if (it == SnackbarResult.ActionPerformed) {
-                launch {
-                    globalRouter.add(ScreenARoute())
+                launch(dependencies.dispatchers.main()) {
+                    globalRouter.newRoot(TabsMainRoute)
                 }
             }
         }

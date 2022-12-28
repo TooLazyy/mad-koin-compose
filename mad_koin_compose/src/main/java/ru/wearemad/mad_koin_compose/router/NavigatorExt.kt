@@ -111,10 +111,14 @@ private fun AttachNavigatorToLifecycle(
             }
         }
     )
-    LaunchedEffect(key1 = onBackPressedDispatcher) {
+
+    suspend fun attachNavigator() {
         navigatorHolder.attachNavigator(navigator)
         navigator.registerOnBackPressedCallback(onBackPressedDispatcher)
         lifecycleOwner?.lifecycle?.addObserver(lifecycleObserver)
+    }
+    LaunchedEffect(key1 = onBackPressedDispatcher) {
+        attachNavigator()
         launchEffectAction()
     }
     DisposableEffect(onBackPressedDispatcher) {
