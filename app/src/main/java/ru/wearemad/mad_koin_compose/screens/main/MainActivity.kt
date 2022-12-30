@@ -1,7 +1,6 @@
 package ru.wearemad.mad_koin_compose.screens.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +24,7 @@ import ru.wearemad.mad_core_compose.vm.vm_store_holder.ComposeScreenViewModelSto
 import ru.wearemad.mad_koin_compose.content.ActivityContentWithProviders
 import ru.wearemad.mad_koin_compose.content.RenderRouteWithSaveableStateHolder
 import ru.wearemad.mad_koin_compose.router.rememberNavigator
+import ru.wearemad.mad_koin_compose.saved_state.SavedStateWorkaround
 import ru.wearemad.mad_koin_compose.scopes.OpenedScopesHolder
 import ru.wearemad.mad_koin_compose.scopes.rememberOpenedScopesHolder
 import ru.wearemad.mad_koin_compose.theme.ComposeNavigationTheme
@@ -35,7 +35,11 @@ val LocalRootNavigator = staticCompositionLocalOf<Navigator> {
 
 class MainActivity : AppCompatActivity() {
 
-    private val vm: MainActivityVm by stateViewModel()
+    private val vm: MainActivityVm by stateViewModel(
+        state = {
+            SavedStateWorkaround.provideMainVmState()
+        }
+    )
 
     private val routerProvidersHolder: DefaultRouterProvidersHolder by inject()
     private val navigatorHolder: RouterNavigatorHolder by inject()
@@ -43,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private val navigatorFactory: NavigatorFactory by inject()
     private val openedScopesHolder: OpenedScopesHolder by inject()
     private val composeScreenViewModelStoreHolder: ComposeScreenViewModelStoreHolderVm by viewModels()
+    private var navigator: Navigator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,16 @@ class MainActivity : AppCompatActivity() {
                     onBackPressedDispatcher = onBackPressedDispatcher,
                     navigatorFactory = navigatorFactory,
                 )
+                navigator = rootNavigator
+                SavedStateWorkaround.restoreState(
+                    {
+                        rootNavigator.restoreState(
+                            it,
+                            navigatorFactory
+                        )
+                    },
+                    { openedScopesHolder.restoreState(it) }
+                )
                 val requestResultStore = rememberRequestResultStore(requestResultStoreFactory)
 
                 ComposeNavigationTheme {
@@ -76,13 +91,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        SavedStateWorkaround.saveState(
+            this,
+            { navigator?.saveState() },
+            { openedScopesHolder.saveState() }
+        )
         super.onPause()
-        if (isFinishing) {
-            //TODO make auto release
-            composeScreenViewModelStoreHolder.clearAll()
-            openedScopesHolder.clearAll()
-            viewModelStore.clear()
-        }
     }
 
     @Composable

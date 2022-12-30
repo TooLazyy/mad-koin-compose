@@ -2,8 +2,10 @@ package ru.wearemad.mad_koin_compose.utils
 
 import androidx.lifecycle.SavedStateHandle
 
+const val FlagWasCreatedBefore = "FlagWasCreatedBefore"
+
 fun SavedStateHandle.ifFlagNotSetBefore(
-    key: String = "wasCreated",
+    key: String,
     actionIfNotSet: () -> Unit
 ) {
     val flag = get(key) ?: false
@@ -12,4 +14,13 @@ fun SavedStateHandle.ifFlagNotSetBefore(
     }
     set(key, true)
     actionIfNotSet()
+}
+
+fun SavedStateHandle.ifWasNotCreatedBefore(
+    actionIfNotSet: () -> Unit
+) {
+    ifFlagNotSetBefore(
+        FlagWasCreatedBefore,
+        actionIfNotSet
+    )
 }

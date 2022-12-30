@@ -7,13 +7,18 @@ import ru.wearemad.mad_core_compose.vm.event.VmEvent
 
 class TabsSubVm(
     deps: VmDependencies,
-    text: String,
+    private val text: String,
 ) : BaseVm<TabsSubState, VmEvent>(
     TabsSubState(text = text),
     deps,
 ) {
 
     init {
-        Log.d("MIINE", "init vm for: $text")
+        Log.d("MIINE", "TabsSubVm init: $text")
+    }
+
+    override fun onCleared() {
+        Log.d("MIINE", "TabsSubVm cleared: $text")
+        super.onCleared()
     }
 }

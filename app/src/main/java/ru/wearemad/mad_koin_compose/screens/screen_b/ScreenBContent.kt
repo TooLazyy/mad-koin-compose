@@ -32,7 +32,7 @@ import ru.wearemad.mad_koin_compose.content.RenderRouteWithSaveableStateHolder
 import ru.wearemad.mad_koin_compose.content.WithKoinScopedVmFlow
 import ru.wearemad.mad_koin_compose.screens.main.LocalRootNavigator
 import ru.wearemad.mad_koin_compose.screens.screen_b.child.SubScreenBRoute
-import ru.wearemad.mad_koin_compose.utils.ifFlagNotSetBefore
+import ru.wearemad.mad_koin_compose.utils.ifWasNotCreatedBefore
 
 @Composable
 fun ScreenBContent(id: String, args: Bundle?) {
@@ -86,7 +86,7 @@ class ScreenBVm(
 
     init {
         Log.d("MIINE", "ScreenBVm")
-        savedStateHandle.ifFlagNotSetBefore(
+        savedStateHandle.ifWasNotCreatedBefore(
             actionIfNotSet = {
                 launch {
                     flowRouter.newRoot(SubScreenBRoute(scopeId))
