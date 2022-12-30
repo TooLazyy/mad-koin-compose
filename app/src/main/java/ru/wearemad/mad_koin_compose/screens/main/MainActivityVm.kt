@@ -8,7 +8,7 @@ import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.event.VmEvent
 import ru.wearemad.mad_koin_compose.screens.splash.SplashRoute
-import ru.wearemad.mad_koin_compose.utils.ifFlagNotSetBefore
+import ru.wearemad.mad_koin_compose.utils.ifWasNotCreatedBefore
 
 class MainActivityVm(
     deps: VmDependencies,
@@ -20,7 +20,7 @@ class MainActivityVm(
 ) {
 
     init {
-        savedStateHandle.ifFlagNotSetBefore(
+        savedStateHandle.ifWasNotCreatedBefore(
             actionIfNotSet = {
                 launch(deps.dispatchers.main()) {
                     router.newRoot(SplashRoute())

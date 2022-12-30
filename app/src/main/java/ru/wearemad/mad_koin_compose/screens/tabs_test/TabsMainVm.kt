@@ -1,5 +1,6 @@
 package ru.wearemad.mad_koin_compose.screens.tabs_test
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.launch
 import ru.wearemad.mad_compose_navigation.impl.router.DefaultRouterProvidersHolder
@@ -7,9 +8,9 @@ import ru.wearemad.mad_compose_navigation.impl.router.Router
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.dependencies.VmDependencies
 import ru.wearemad.mad_core_compose.vm.event.VmEvent
+import ru.wearemad.mad_core_compose.vm.lifecycle.data.ActivityLifecycleState
 import ru.wearemad.mad_koin_compose.screens.tabs_test.navigation.replaceTab
 import ru.wearemad.mad_koin_compose.screens.tabs_test.tab.TabsSubRoute
-import ru.wearemad.mad_koin_compose.utils.ifFlagNotSetBefore
 
 class TabsMainVm(
     deps: VmDependencies,
@@ -24,7 +25,6 @@ class TabsMainVm(
 
     private companion object {
 
-        const val KEY_CREATED = "key_created"
         const val KEY_TAB = "key_tab"
     }
 
@@ -32,14 +32,9 @@ class TabsMainVm(
         get() = holder.getOrCreateRouter(scopeId)
 
     init {
-        flowRouter.hashCode()
-        savedStateHandle.ifFlagNotSetBefore(
-            KEY_CREATED,
-            actionIfNotSet = {
-                val currentOpenTab = 0
-                openTab(currentOpenTab)
-            }
-        )
+        Log.d("MIINE", "TabsMainVm init")
+        val savedTab = savedStateHandle.get<Int>(KEY_TAB) ?: 0
+        openTab(savedTab)
     }
 
     fun onBottomItemClicked(tabId: Int) {
