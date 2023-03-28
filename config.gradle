@@ -6,8 +6,8 @@ ext {
     targetSdk = 33
 
     //version
-    vCode = 7
-    vName = "1.0.6"
+    vCode = 8
+    vName = "1.0.7"
 
     //gradle
     gradleVersion = '7.3.0'
@@ -18,19 +18,19 @@ ext {
     kotlinCoroutinesAndroidVersion = '1.6.1'
 
     //app compat
-    appCompatVersion = '1.5.1'
-    lifecycleVersion = '2.5.1'
+    appCompatVersion = '1.6.1'
+    lifecycleVersion = '2.6.1'
 
     //compose
     composeVersion = '1.3.2'
-    composeRuntimeVersion = '1.2.0'
-    composeMaterialVersion = '1.3.1'
-    composeActivityVersion = '1.5.0'
+    composeRuntimeVersion = '1.4.0'
+    composeMaterialVersion = '1.4.0'
+    composeActivityVersion = '1.7.0'
 
     //mad
     madComposeNavigationVersion = '1.0.6'
-    madComposeCoreVersion = '1.0.5'
-    madUtilsVersion = '1.0.0'
+    madComposeCoreVersion = '1.0.7'
+    madUtilsVersion = '1.0.1'
 
     //koin
     koinVersion= "3.2.0"
