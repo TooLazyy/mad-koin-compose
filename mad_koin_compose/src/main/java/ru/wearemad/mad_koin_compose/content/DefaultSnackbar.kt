@@ -1,21 +1,27 @@
 package ru.wearemad.mad_koin_compose.content
 
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarData
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import ru.wearemad.mad_core_compose.message.data.AppSnackState
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DefaultSnackbar(
-    state: SnackbarHostState,
+    state: AppSnackState,
     modifier: Modifier = Modifier,
-    snackContent: @Composable (SnackbarData) -> Unit = { Snackbar(it) }
+    snackContent: @Composable (payload: Any?) -> Unit
 ) {
-    SnackbarHost(
-        hostState = state,
+    AnimatedContent(
         modifier = modifier,
-        snackbar = snackContent
-    )
+        targetState = state
+    ) { targetState ->
+        when (targetState) {
+            is AppSnackState.Hidden -> {}
+            is AppSnackState.Visible -> {
+                snackContent(targetState.payload)
+            }
+        }
+    }
 }

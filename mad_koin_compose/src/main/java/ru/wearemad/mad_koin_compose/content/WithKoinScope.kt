@@ -3,7 +3,6 @@ package ru.wearemad.mad_koin_compose.content
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,7 +13,8 @@ import org.koin.core.scope.Scope
 import ru.wearemad.mad_compose_navigation.api.navigator.Navigator
 import ru.wearemad.mad_compose_navigation.api.navigator.navigator_factory.NestedNavigatorFactory
 import ru.wearemad.mad_compose_navigation.impl.router.DefaultRouterProvidersHolder
-import ru.wearemad.mad_core_compose.message.rememberSnackbarHostState
+import ru.wearemad.mad_core_compose.message.data.AppSnackState
+import ru.wearemad.mad_core_compose.message.rememberAppSnackState
 import ru.wearemad.mad_core_compose.utils.SubscribeToLifecycle
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.event.VmEvent
@@ -33,10 +33,11 @@ import kotlin.reflect.KClass
 fun WithKoinScope(
     screenId: String,
     modifier: Modifier = Modifier,
-    snackContent: @Composable BoxScope.(SnackbarHostState) -> Unit = { snackbarHostState ->
+    snackContent: @Composable BoxScope.(AppSnackState) -> Unit = { snackBarState ->
         DefaultSnackbar(
             modifier = Modifier.align(Alignment.BottomCenter),
-            state = snackbarHostState
+            state = snackBarState,
+            snackContent = {}
         )
     },
     content: @Composable Scope.() -> Unit,
@@ -44,7 +45,7 @@ fun WithKoinScope(
     val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
     UpdateOpenedScopes(screenId)
 
-    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
+    val snackbarHostState = rememberAppSnackState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content()
@@ -62,10 +63,11 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     vmClass: KClass<Vm>,
     modifier: Modifier = Modifier,
     vmParameters: ParametersDefinition? = null,
-    snackContent: @Composable BoxScope.(SnackbarHostState) -> Unit = { snackbarHostState ->
+    snackContent: @Composable BoxScope.(AppSnackState, Vm) -> Unit = { snackBarState, _ ->
         DefaultSnackbar(
             modifier = Modifier.align(Alignment.BottomCenter),
-            state = snackbarHostState
+            state = snackBarState,
+            snackContent = {}
         )
     },
     content: @Composable Scope.(vm: Vm) -> Unit,
@@ -80,11 +82,11 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     )
     SubscribeToLifecycle(vm)
 
-    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
+    val snackbarHostState = rememberAppSnackState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content(vm)
-        snackContent(snackbarHostState)
+        snackContent(snackbarHostState, vm)
     }
 }
 
@@ -98,10 +100,11 @@ fun WithKoinScopeFlow(
     screenId: String,
     modifier: Modifier = Modifier,
     onBackPressedDispatcher: OnBackPressedDispatcher? = LocalRootBackPressedDispatcher.current,
-    snackContent: @Composable BoxScope.(SnackbarHostState) -> Unit = { snackbarHostState ->
+    snackContent: @Composable BoxScope.(AppSnackState) -> Unit = { snackBarState ->
         DefaultSnackbar(
             modifier = Modifier.align(Alignment.BottomCenter),
-            state = snackbarHostState
+            state = snackBarState,
+            snackContent = {}
         )
     },
     content: @Composable Scope.(Navigator) -> Unit,
@@ -119,7 +122,7 @@ fun WithKoinScopeFlow(
         factory = nestedNavigatorFactory
     )
 
-    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
+    val snackbarHostState = rememberAppSnackState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content(nestedNavigator)
@@ -139,10 +142,11 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     modifier: Modifier = Modifier,
     vmParameters: ParametersDefinition? = null,
     onBackPressedDispatcher: OnBackPressedDispatcher? = LocalRootBackPressedDispatcher.current,
-    snackContent: @Composable BoxScope.(SnackbarHostState) -> Unit = { snackbarHostState ->
+    snackContent: @Composable BoxScope.(AppSnackState, Vm) -> Unit = { snackBarState, _ ->
         DefaultSnackbar(
             modifier = Modifier.align(Alignment.BottomCenter),
-            state = snackbarHostState
+            state = snackBarState,
+            snackContent = {}
         )
     },
     content: @Composable Scope.(Navigator, Vm) -> Unit,
@@ -167,11 +171,11 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     )
     SubscribeToLifecycle(vm)
 
-    val snackbarHostState = rememberSnackbarHostState(holder = scope.get())
+    val snackbarHostState = rememberAppSnackState(holder = scope.get())
 
     Box(modifier = modifier) {
         scope.content(nestedNavigator, vm)
-        snackContent(snackbarHostState)
+        snackContent(snackbarHostState, vm)
     }
 }
 
