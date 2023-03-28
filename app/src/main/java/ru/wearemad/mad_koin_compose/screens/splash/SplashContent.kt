@@ -79,7 +79,7 @@ class SplashVm(
                 "some text",
                 AppSnackDuration.WithTime(1_500L)
             )
-        ) {}
+        )
     }
 
     fun onSnackClicked() {
