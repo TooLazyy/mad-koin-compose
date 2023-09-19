@@ -1,12 +1,10 @@
 package ru.wearemad.mad_koin_compose.content
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.wearemad.mad_core_compose.message.data.AppSnackState
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DefaultSnackbar(
     state: AppSnackState,
@@ -15,7 +13,8 @@ fun DefaultSnackbar(
 ) {
     AnimatedContent(
         modifier = modifier,
-        targetState = state
+        targetState = state,
+        label = "DefaultSnackbar"
     ) { targetState ->
         when (targetState) {
             is AppSnackState.Hidden -> {}

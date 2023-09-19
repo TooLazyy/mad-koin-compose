@@ -1,4 +1,4 @@
 jdk:
- - openjdk11
+ - openjdk17
 install:
  - ./gradlew :mad_koin_compose:build :mad_koin_compose:publishToMavenLocal
