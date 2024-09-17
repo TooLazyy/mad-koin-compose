@@ -167,7 +167,7 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
     navigator: Navigator,
     saveableStateHolder: SaveableStateHolder?
 ) {
-    launch(Dispatchers.IO) {
+    launch(Dispatchers.Main.immediate) {
         navigator
             .stateFlow
             .drop(1)
