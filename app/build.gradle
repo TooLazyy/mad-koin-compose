@@ -8,6 +8,7 @@ apply from: '../config.gradle'
 
 android {
     compileSdk project.compileSdk
+    namespace project.appId
 
     defaultConfig {
         applicationId project.appId
@@ -44,8 +45,6 @@ android {
 dependencies {
 
     implementation project (':mad_koin_compose')
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesAndroidVersion"

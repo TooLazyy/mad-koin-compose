@@ -7,6 +7,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +32,7 @@ import ru.wearemad.mad_core_compose.vm.vm_store_holder.ComposeScreenViewModelSto
 import ru.wearemad.mad_core_compose.vm.vm_store_holder.LocalComposeScreenViewModelStoreHolder
 import ru.wearemad.mad_koin_compose.scopes.LocalOpenedScopesHolder
 import ru.wearemad.mad_koin_compose.scopes.OpenedScopesHolder
+import ru.wearemad.mad_koin_compose.utils.LocalRootSaveableStateHolder
 
 @Composable
 fun rememberNavigator(
@@ -57,6 +59,7 @@ fun rememberNavigator(
     val routerProviderHolder = LocalRouterProvidersHolderProvider.current
     val openedScopesHolder = LocalOpenedScopesHolder.current
     val savedStateRegistryOwner = LocalContext.current as SavedStateRegistryOwner
+    val saveableStateHolder = LocalRootSaveableStateHolder.current
     AttachNavigatorToLifecycle(
         navigatorHolder,
         navigator,
@@ -67,7 +70,8 @@ fun rememberNavigator(
             openedScopesHolder,
             routerProviderHolder,
             savedStateRegistryOwner.savedStateRegistry,
-            navigator
+            navigator,
+            saveableStateHolder
         )
     }
     return navigator
@@ -160,7 +164,8 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
     openedScopesHolder: OpenedScopesHolder,
     routerProviderHolder: RouterProvidersHolder<*>,
     savedStateRegistry: SavedStateRegistry,
-    navigator: Navigator
+    navigator: Navigator,
+    saveableStateHolder: SaveableStateHolder?
 ) {
     launch(Dispatchers.IO) {
         navigator
@@ -182,6 +187,7 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
                     routerProviderHolder.remove(it)
                     vmStoreHolder.clearScreenVmOwner(it)
                     savedStateRegistry.unregisterSavedStateProvider(it)
+                    saveableStateHolder?.removeState(it)
                 }
             }
     }

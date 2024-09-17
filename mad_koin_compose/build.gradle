@@ -8,6 +8,7 @@ apply from: '../config.gradle'
 
 android {
     compileSdk project.compileSdk
+    namespace 'ru.wearemad.mad_koin_compose'
 
     defaultConfig {
         minSdkVersion project.minSdk
@@ -36,6 +37,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion project.composeVersion
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -56,11 +62,14 @@ dependencies {
     api "com.github.TooLazyy:Mad-Utils:$madUtilsVersion"
 }
 
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
+publishing {
+    publications {
+        release(MavenPublication) {
+            afterEvaluate {
                 from components.release
+                groupId = 'ru.wearemad'
+                artifactId = 'mad_koin_compose'
+                version = project.vName
             }
         }
     }

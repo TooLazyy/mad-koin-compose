@@ -1,18 +1,17 @@
 package ru.wearemad.mad_koin_compose.content
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import ru.wearemad.mad_compose_navigation.api.route.Route
 
 /**
  * Invoke Route's content on SaveableStateHolder which allows to save state using rememberSaveable
  */
 @Composable
-fun RenderRouteWithSaveableStateHolder(
+fun SaveableStateHolder.RenderRouteWithSaveableStateHolder(
     route: Route
 ) {
-    val restorableStateHolder = rememberSaveableStateHolder()
-    restorableStateHolder.SaveableStateProvider(key = route.screenKey) {
+    SaveableStateProvider(key = route.screenKey) {
         route.content(route.screenKey, route.args)
     }
 }

@@ -9,8 +9,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.staticCompositionLocalOf
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
@@ -57,10 +59,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
+            val saveableStateHolder = rememberSaveableStateHolder()
             ActivityContentWithProviders(
                 routerProvidersHolder = routerProvidersHolder,
                 openedScopesHolder = rememberOpenedScopesHolder { openedScopesHolder },
                 composeScreenViewModelStoreHolder = composeScreenViewModelStoreHolder,
+                saveableStateHolder = saveableStateHolder
             ) {
                 val rootNavigator = rememberNavigator(
                     navigatorHolder = navigatorHolder,
@@ -81,9 +85,9 @@ class MainActivity : AppCompatActivity() {
 
                 ComposeNavigationTheme {
                     CompositionLocalProvider(
-                        LocalRootNavigator provides rootNavigator
+                        LocalRootNavigator provides rootNavigator,
                     ) {
-                        RootScreen(savedInstanceState)
+                        RootScreen(savedInstanceState, saveableStateHolder)
                     }
                 }
             }
@@ -100,7 +104,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun RootScreen(savedInstanceState: Bundle?) {
+    private fun RootScreen(
+        savedInstanceState: Bundle?,
+        saveableStateHolder: SaveableStateHolder,
+    ) {
         val rootNavigator = LocalRootNavigator.current
         val rootNavigatorState = rootNavigator.stateFlow.collectAsState()
         val currentRoute = rootNavigatorState.value.currentRoute
@@ -113,12 +120,12 @@ class MainActivity : AppCompatActivity() {
                     durationMillis = 700
                 ),
             ) {
-                RenderRouteWithSaveableStateHolder(it)
+                saveableStateHolder.RenderRouteWithSaveableStateHolder(it)
             }
         }
 
         dialogs.forEach {
-            RenderRouteWithSaveableStateHolder(it)
+            saveableStateHolder.RenderRouteWithSaveableStateHolder(it)
         }
     }
 

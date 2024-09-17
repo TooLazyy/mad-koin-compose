@@ -32,6 +32,7 @@ import ru.wearemad.mad_koin_compose.content.RenderRouteWithSaveableStateHolder
 import ru.wearemad.mad_koin_compose.content.WithKoinScopedVmFlow
 import ru.wearemad.mad_koin_compose.screens.main.LocalRootNavigator
 import ru.wearemad.mad_koin_compose.screens.screen_b.child.SubScreenBRoute
+import ru.wearemad.mad_koin_compose.utils.LocalRootSaveableStateHolder
 import ru.wearemad.mad_koin_compose.utils.ifWasNotCreatedBefore
 
 @Composable
@@ -48,6 +49,7 @@ fun ScreenBContent(id: String, args: Bundle?) {
             Log.d("MIINE", "ScreenBContent: $id")
             val nestedState = nestedNavigator.stateFlow.collectAsState()
             val currentRoute = nestedState.value.currentRoute
+            val saveableStateHolder = LocalRootSaveableStateHolder.current
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -58,7 +60,7 @@ fun ScreenBContent(id: String, args: Bundle?) {
                     .padding(top = 190.dp)
             ) {
                 if (currentRoute != null) {
-                    RenderRouteWithSaveableStateHolder(currentRoute)
+                    saveableStateHolder?.RenderRouteWithSaveableStateHolder(currentRoute)
                 }
             }
         }

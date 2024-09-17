@@ -21,6 +21,7 @@ import org.koin.core.parameter.parametersOf
 import ru.wearemad.mad_koin_compose.content.RenderRouteWithSaveableStateHolder
 import ru.wearemad.mad_koin_compose.content.WithKoinScopedVmFlow
 import ru.wearemad.mad_koin_compose.screens.main.LocalRootNavigator
+import ru.wearemad.mad_koin_compose.utils.LocalRootSaveableStateHolder
 
 @Composable
 fun TabsMainScreen(
@@ -37,6 +38,7 @@ fun TabsMainScreen(
         val nestedState = nestedNavigator.stateFlow.collectAsState()
         val currentRoute = nestedState.value.currentRoute
         val state = vm.stateFlow.collectAsState()
+        val saveableStateHolder = LocalRootSaveableStateHolder.current
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
@@ -50,7 +52,7 @@ fun TabsMainScreen(
                             durationMillis = 500
                         )
                     ) {
-                        RenderRouteWithSaveableStateHolder(it)
+                        saveableStateHolder?.RenderRouteWithSaveableStateHolder(it)
                     }
                 }
             }

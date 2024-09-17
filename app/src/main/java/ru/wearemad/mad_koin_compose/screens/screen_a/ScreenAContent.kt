@@ -6,10 +6,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.wearemad.mad_compose_navigation.impl.router.Router
@@ -31,6 +39,23 @@ fun ScreenAContent(id: String, args: Bundle?) {
         screenId = id,
         vmClass = ScreenAVm::class
     ) { vm ->
+        val data = remember {
+            mutableStateOf("old value")
+        }
+        val data2 = rememberSaveable(
+            id,
+            stateSaver = object : Saver<String, Bundle> {
+
+                override fun restore(value: Bundle): String? =
+                    value.getString("data")
+
+                override fun SaverScope.save(value: String): Bundle = Bundle().apply {
+                    putString("data", value)
+                }
+            }
+        ) {
+            mutableStateOf("old value 2")
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -38,7 +63,23 @@ fun ScreenAContent(id: String, args: Bundle?) {
                 .clickable {
                     vm.onClicked()
                 }
-        )
+        ) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .clickable {
+                        data.value = "new value"
+                        data2.value = "new value 2"
+                    },
+                text = buildAnnotatedString {
+                    append("remember=")
+                    append(data.value)
+                    append(", saved=")
+                    append(data2.value)
+                },
+                color = Color.Black
+            )
+        }
     }
 }
 
