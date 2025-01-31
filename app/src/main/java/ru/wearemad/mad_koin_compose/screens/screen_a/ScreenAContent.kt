@@ -109,7 +109,7 @@ class ScreenAVm(
                         REQUEST_SCREEN_A_ALERT_1 -> {
                             val data = it.castData<CommonAlertResult>()
                             if (data.posivite) {
-                                globalRouter.add(ScreenBRoute())
+                                globalRouter.add(ScreenBRoute(), withAnimation = false)
                             }
                             Log.d("MIINE", "result from alert $data")
                         }

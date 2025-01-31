@@ -116,7 +116,7 @@ class SplashVm(
 
     fun onSnackClicked() {
         launch(dependencies.dispatchers.main()) {
-            globalRouter.add(ScreenARoute())
+            globalRouter.add(ScreenARoute(), withAnimation = false)
         }
     }
 }

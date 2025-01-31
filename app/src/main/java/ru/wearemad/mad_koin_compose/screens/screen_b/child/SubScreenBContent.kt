@@ -56,7 +56,7 @@ class SubScreenBVm(
 
     fun onOpenChildClicked() {
         launch {
-            parentRouter?.add(SubScreenBRoute(parentId, colorsList.random()))
+            parentRouter?.add(SubScreenBRoute(parentId, colorsList.random()), withAnimation = false)
         }
     }
 }

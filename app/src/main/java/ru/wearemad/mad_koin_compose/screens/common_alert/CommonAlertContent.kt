@@ -69,21 +69,21 @@ class CommonAlertVm(
 
     fun onDismissClicked() {
         launch {
-            router.back()
+            router.back(withAnimation = false)
         }
     }
 
     fun onNegativeButtonClicked() {
         setResult(requestKey, CommonAlertResult(posivite = false))
         launch {
-            router.back()
+            router.back(withAnimation = false)
         }
     }
 
     fun onPositiveButtonClicked() {
         setResult(requestKey, CommonAlertResult(posivite = true))
         launch {
-            router.back()
+            router.back(withAnimation = false)
         }
     }
 }

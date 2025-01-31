@@ -23,7 +23,7 @@ class MainActivityVm(
         savedStateHandle.ifWasNotCreatedBefore(
             actionIfNotSet = {
                 launch(deps.dispatchers.main()) {
-                    router.newRoot(SplashRoute())
+                    router.newRoot(SplashRoute(), withAnimation = false)
                 }
             }
         )

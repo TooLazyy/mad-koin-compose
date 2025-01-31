@@ -33,7 +33,8 @@ class ReplaceTabCommand(
         }
         return CommandOutput(
             newRoutesList,
-            input.dialogsStack
+            input.dialogsStack,
+            withAnimation = false,
         )
     }
 }

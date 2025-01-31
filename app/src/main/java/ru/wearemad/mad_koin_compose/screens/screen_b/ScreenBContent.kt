@@ -91,7 +91,7 @@ class ScreenBVm(
         savedStateHandle.ifWasNotCreatedBefore(
             actionIfNotSet = {
                 launch {
-                    flowRouter.newRoot(SubScreenBRoute(scopeId))
+                    flowRouter.newRoot(SubScreenBRoute(scopeId), withAnimation = false)
                 }
             }
         )
@@ -100,7 +100,7 @@ class ScreenBVm(
     fun onRootClicked() {
         setResult("key_1", ScreenBResult("from screen a"))
         viewModelScope.launch {
-            globalRouter.add(ScreenBRoute())
+            globalRouter.add(ScreenBRoute(), withAnimation = false)
         }
     }
 }

@@ -1,6 +1,7 @@
 package ru.wearemad.mad_koin_compose.router
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -17,6 +18,7 @@ import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
@@ -171,8 +173,13 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
         navigator
             .stateFlow
             .drop(1)
+            .filterNot {
+                Log.d("MIINE", "subscribeToNavigatorAndCleanUnusedData. withAnimation=${it.withAnimation}")
+                it.withAnimation
+            }
             .map(::flattenNavigatorBackStack)
             .map { screenIds ->
+                Log.d("MIINE", "subscribeToNavigatorAndCleanUnusedData. map ids")
                 val openedScopes = openedScopesHolder.openedScopes
                 openedScopes
                     .filterNot { screenIds.contains(it) }
