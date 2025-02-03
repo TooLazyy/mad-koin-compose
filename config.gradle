@@ -6,8 +6,8 @@ ext {
     targetSdk = 34
 
     //version
-    vCode = 11
-    vName = "1.0.10"
+    vCode = 12
+    vName = "1.1.0"
 
     //gradle
     gradleVersion = '8.4.2'
@@ -28,7 +28,7 @@ ext {
     composeActivityVersion = '1.9.2'
 
     //mad
-    madComposeNavigationVersion = '94045a6a93'//TODO '1.0.8'
+    madComposeNavigationVersion = '1.0.9'
     madComposeCoreVersion = '1.0.9'
     madUtilsVersion = '1.0.1'
 
