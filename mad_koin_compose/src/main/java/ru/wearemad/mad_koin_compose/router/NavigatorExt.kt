@@ -176,7 +176,7 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
             .filterNot { it.withAnimation }
             .map(::flattenNavigatorBackStack)
             .map { screenIds ->
-                Log.d("MIINE", "subscribeToNavigatorAndCleanUnusedData. map ids=${screenIds.joinToString()}")
+                Log.d("NavigatorExt", "subscribeToNavigatorAndCleanUnusedData. map ids=${screenIds.joinToString()}")
                 val openedScopes = openedScopesHolder.openedScopes
                 openedScopes
                     .filterNot { screenIds.contains(it) }
