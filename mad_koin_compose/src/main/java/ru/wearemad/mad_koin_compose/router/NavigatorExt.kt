@@ -176,12 +176,17 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
             .filterNot { it.withAnimation }
             .map(::flattenNavigatorBackStack)
             .map { screenIds ->
-                Log.d("NavigatorExt", "subscribeToNavigatorAndCleanUnusedData. map ids=${screenIds.joinToString()}")
                 val openedScopes = openedScopesHolder.openedScopes
-                openedScopes
+                Log.d(
+                    "NavigatorExt",
+                    "subscribeToNavigatorAndCleanUnusedData. map ids=${screenIds.joinToString()}, openedScopes=${openedScopes.joinToString()}"
+                )
+                screenIds.toSet() to openedScopes
                     .filterNot { screenIds.contains(it) }
             }
-            .collect { scopesToClose ->
+            .collect { data ->
+                val scopesToClose = data.second
+                val openedScreens = data.first
                 scopesToClose.forEach {
                     openedScopesHolder.removeScreenScope(it)
                     val scope = getKoin().getScopeOrNull(it)
@@ -193,6 +198,7 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
                     savedStateRegistry.unregisterSavedStateProvider(it)
                     saveableStateHolder?.removeState(it)
                 }
+                vmStoreHolder.clearForUnusedScreens(openedScreens)
             }
     }
 }
