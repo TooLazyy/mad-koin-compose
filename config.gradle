@@ -29,7 +29,7 @@ ext {
 
     //mad
     madComposeNavigationVersion = '1.0.9'
-    madComposeCoreVersion = 'f0125cb233'//TODO '1.0.9'
+    madComposeCoreVersion = 'c28a952624'//TODO '1.0.9'
     madUtilsVersion = '1.0.1'
 
     //koin
