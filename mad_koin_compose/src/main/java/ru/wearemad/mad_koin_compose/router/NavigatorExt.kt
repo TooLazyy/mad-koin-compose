@@ -186,10 +186,10 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
                     .toSet()
             }
             .collect { data ->
-                val scopesToClose = data.second
                 val openedScreens = data.first
+                val scopesToClose = data.second
                 val closedVmScreens = vmStoreHolder.clearForUnusedScreens(openedScreens)
-                (closedVmScreens + scopesToClose).toSet().forEach {
+                (closedVmScreens + scopesToClose).forEach {
                     openedScopesHolder.removeScreenScope(it)
                     val scope = getKoin().getScopeOrNull(it)
                     if (scope?.isNotClosed() == true) {
@@ -200,7 +200,6 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
                     savedStateRegistry.unregisterSavedStateProvider(it)
                     saveableStateHolder?.removeState(it)
                 }
-
             }
     }
 }
