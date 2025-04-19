@@ -28,9 +28,11 @@ ext {
     composeActivityVersion = '1.9.2'
 
     //mad
-    madComposeNavigationVersion = '1.0.9'
+    madComposeNavigationVersion = 'f954484fc0'
+    //TODO madComposeNavigationVersion = '1.0.9'
     madComposeCoreVersion = '1.1.0'
-    madUtilsVersion = '1.0.1'
+    //TODO madUtilsVersion = '1.0.1'
+    madUtilsVersion = '4db63c161d'
 
     //koin
     koinVersion= "3.2.0"
