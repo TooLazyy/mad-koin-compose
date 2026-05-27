@@ -5,7 +5,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -14,8 +17,10 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.wearemad.mad_compose_navigation.api.navigator.Navigator
 import ru.wearemad.mad_compose_navigation.api.navigator.navigator_factory.NavigatorFactory
 import ru.wearemad.mad_compose_navigation.api.router.RouterNavigatorHolder
@@ -37,11 +42,7 @@ val LocalRootNavigator = staticCompositionLocalOf<Navigator> {
 
 class MainActivity : AppCompatActivity() {
 
-    private val vm: MainActivityVm by stateViewModel(
-        state = {
-            SavedStateWorkaround.provideMainVmState()
-        }
-    )
+    private val vm: MainActivityVm by viewModel()
 
     private val routerProvidersHolder: DefaultRouterProvidersHolder by inject()
     private val navigatorHolder: RouterNavigatorHolder by inject()
@@ -103,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     private fun RootScreen(
         savedInstanceState: Bundle?,
@@ -114,14 +116,21 @@ class MainActivity : AppCompatActivity() {
         val dialogs = rootNavigatorState.value.currentDialogsStack
 
         if (currentRoute != null) {
-            Crossfade(
-                targetState = currentRoute,
-                animationSpec = tween(
-                    durationMillis = 700
-                ),
-            ) {
-                saveableStateHolder.RenderRouteWithSaveableStateHolder(it)
-            }
+            val transition = updateTransition(
+                currentRoute,
+                label = null,
+            )
+            transition.Crossfade(
+                modifier = Modifier.background(Color.White),
+                animationSpec = tween(durationMillis = 350),
+                content = {
+                    val animInProgress = transition.currentState != transition.targetState
+                    if (animInProgress.not()) {
+                        rootNavigator.updateAnimationState(animInProgress)
+                    }
+                    saveableStateHolder.RenderRouteWithSaveableStateHolder(it)
+                }
+            )
         }
 
         dialogs.forEach {

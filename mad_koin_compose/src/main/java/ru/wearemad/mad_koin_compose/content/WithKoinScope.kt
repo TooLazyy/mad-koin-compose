@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.koin.androidx.compose.get
-import org.koin.androidx.compose.getKoin
+import org.koin.compose.getKoin
+import org.koin.compose.koinInject
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.scope.Scope
 import ru.wearemad.mad_compose_navigation.api.navigator.Navigator
@@ -113,7 +113,7 @@ fun WithKoinScopeFlow(
     UpdateOpenedScopes(screenId)
 
     val nestedNavigatorFactory = scope.get<NestedNavigatorFactory>()
-    val routerProviderHolder = get<DefaultRouterProvidersHolder>()
+    val routerProviderHolder = koinInject<DefaultRouterProvidersHolder>()
     val navigatorHolder = routerProviderHolder.getOrCreateHolder(screenId)
     val nestedNavigator = rootNavigator.rememberNestedNavigator(
         navigatorHolder = navigatorHolder,
@@ -155,7 +155,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     UpdateOpenedScopes(screenId)
 
     val nestedNavigatorFactory = scope.get<NestedNavigatorFactory>()
-    val routerProviderHolder = get<DefaultRouterProvidersHolder>()
+    val routerProviderHolder = koinInject<DefaultRouterProvidersHolder>()
     val navigatorHolder = routerProviderHolder.getOrCreateHolder(screenId)
     val nestedNavigator = rootNavigator.rememberNestedNavigator(
         navigatorHolder = navigatorHolder,
