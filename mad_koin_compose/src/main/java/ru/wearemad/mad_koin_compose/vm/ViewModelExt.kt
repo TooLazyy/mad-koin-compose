@@ -39,13 +39,12 @@ fun <T : ViewModel> Scope.getScopedViewModelByClass(
     parameters: ParametersDefinition? = null,
 ): T {
     val registryOwner = LocalContext.current as? SavedStateRegistryOwner
-    val extras = buildExtras(owner, registryOwner)
-    return remember(viewModelId) {
+    return remember(viewModelId, owner) {
         resolveViewModel(
             vmClass = vmClass,
             viewModelStore = owner.viewModelStore,
             key = viewModelId,
-            extras = extras,
+            extras = buildExtras(owner, registryOwner),
             qualifier = qualifier,
             scope = this,
             parameters = parameters,

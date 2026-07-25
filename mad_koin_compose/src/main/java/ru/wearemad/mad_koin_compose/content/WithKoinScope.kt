@@ -4,6 +4,8 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.koin.compose.getKoin
@@ -42,8 +44,7 @@ fun WithKoinScope(
     },
     content: @Composable Scope.() -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
-    UpdateOpenedScopes(screenId)
+    val scope = rememberScreenScope(screenId)
 
     val snackbarHostState = rememberAppSnackState(holder = scope.get())
 
@@ -72,8 +73,7 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     },
     content: @Composable Scope.(vm: Vm) -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
-    UpdateOpenedScopes(screenId)
+    val scope = rememberScreenScope(screenId)
 
     val vm = scope.getScopedViewModelByClass(
         viewModelId = screenId,
@@ -109,17 +109,12 @@ fun WithKoinScopeFlow(
     },
     content: @Composable Scope.(Navigator) -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
-    UpdateOpenedScopes(screenId)
+    val scope = rememberScreenScope(screenId)
 
-    val nestedNavigatorFactory = scope.get<NestedNavigatorFactory>()
-    val routerProviderHolder = koinInject<DefaultRouterProvidersHolder>()
-    val navigatorHolder = routerProviderHolder.getOrCreateHolder(screenId)
-    val nestedNavigator = rootNavigator.rememberNestedNavigator(
-        navigatorHolder = navigatorHolder,
-        key = screenId,
+    val nestedNavigator = rootNavigator.rememberScopedNestedNavigator(
+        scope = scope,
+        screenId = screenId,
         onBackPressedDispatcher = onBackPressedDispatcher,
-        factory = nestedNavigatorFactory
     )
 
     val snackbarHostState = rememberAppSnackState(holder = scope.get())
@@ -151,17 +146,12 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
     },
     content: @Composable Scope.(Navigator, Vm) -> Unit,
 ) {
-    val scope = getKoin().getOrCreateScope<ScreenScope>(screenId)
-    UpdateOpenedScopes(screenId)
+    val scope = rememberScreenScope(screenId)
 
-    val nestedNavigatorFactory = scope.get<NestedNavigatorFactory>()
-    val routerProviderHolder = koinInject<DefaultRouterProvidersHolder>()
-    val navigatorHolder = routerProviderHolder.getOrCreateHolder(screenId)
-    val nestedNavigator = rootNavigator.rememberNestedNavigator(
-        navigatorHolder = navigatorHolder,
-        key = screenId,
+    val nestedNavigator = rootNavigator.rememberScopedNestedNavigator(
+        scope = scope,
+        screenId = screenId,
         onBackPressedDispatcher = onBackPressedDispatcher,
-        factory = nestedNavigatorFactory,
     )
 
     val vm = scope.getScopedViewModelByClass(
@@ -180,8 +170,32 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
 }
 
 @Composable
-private fun UpdateOpenedScopes(
+private fun rememberScreenScope(screenId: String): Scope {
+    val koin = getKoin()
+    val scope = remember(screenId) {
+        koin.getOrCreateScope<ScreenScope>(screenId)
+    }
+    val openedScopesHolder = LocalOpenedScopesHolder.current
+    DisposableEffect(screenId) {
+        openedScopesHolder.addScreenScope(screenId)
+        onDispose { }
+    }
+    return scope
+}
+
+@Composable
+private fun Navigator.rememberScopedNestedNavigator(
+    scope: Scope,
     screenId: String,
-) {
-    LocalOpenedScopesHolder.current.addScreenScope(screenId)
+    onBackPressedDispatcher: OnBackPressedDispatcher?,
+): Navigator {
+    val nestedNavigatorFactory = scope.get<NestedNavigatorFactory>()
+    val routerProviderHolder = koinInject<DefaultRouterProvidersHolder>()
+    val navigatorHolder = routerProviderHolder.getOrCreateHolder(screenId)
+    return rememberNestedNavigator(
+        navigatorHolder = navigatorHolder,
+        key = screenId,
+        onBackPressedDispatcher = onBackPressedDispatcher,
+        factory = nestedNavigatorFactory,
+    )
 }

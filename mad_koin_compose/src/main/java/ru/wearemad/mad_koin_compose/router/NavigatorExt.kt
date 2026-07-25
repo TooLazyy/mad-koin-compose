@@ -41,6 +41,7 @@ fun rememberNavigator(
     navigatorHolder: RouterNavigatorHolder,
     onBackPressedDispatcher: OnBackPressedDispatcher? = null,
     navigatorFactory: NavigatorFactory,
+    persistentScreenIds: () -> Set<String> = { emptySet() },
 ): Navigator {
     val rootFactory = remember(onBackPressedDispatcher) {
         {
@@ -49,12 +50,15 @@ fun rememberNavigator(
             )
         }
     }
-    val navigator = rememberSaveable(
-        onBackPressedDispatcher,
-        saver = createNavigatorSaver(
+    val saver = remember(rootFactory, navigatorFactory) {
+        createNavigatorSaver(
             rootNavigatorProvider = rootFactory,
             factory = navigatorFactory,
-        ),
+        )
+    }
+    val navigator = rememberSaveable(
+        onBackPressedDispatcher,
+        saver = saver,
         init = rootFactory
     )
     val vmStoreHolder = LocalComposeScreenViewModelStoreHolder.current
@@ -73,7 +77,8 @@ fun rememberNavigator(
             routerProviderHolder,
             savedStateRegistryOwner.savedStateRegistry,
             navigator,
-            saveableStateHolder
+            saveableStateHolder,
+            persistentScreenIds,
         )
     }
     return navigator
@@ -123,11 +128,11 @@ private fun AttachNavigatorToLifecycle(
         navigator.registerOnBackPressedCallback(onBackPressedDispatcher)
         lifecycleOwner?.lifecycle?.addObserver(lifecycleObserver)
     }
-    LaunchedEffect(key1 = onBackPressedDispatcher) {
+    LaunchedEffect(onBackPressedDispatcher, navigator, navigatorHolder) {
         attachNavigator()
         launchEffectAction()
     }
-    DisposableEffect(onBackPressedDispatcher) {
+    DisposableEffect(onBackPressedDispatcher, navigator, navigatorHolder) {
         onDispose {
             navigatorHolder.detachNavigator()
             navigator.unregisterOnBackPressedCallback()
@@ -149,6 +154,9 @@ private fun createNavigatorSaver(
     }
 )
 
+private fun NavigatorState.hasActiveAnimations(): Boolean =
+    withAnimation || nestedNavigatorsState.any { it.hasActiveAnimations() }
+
 private fun flattenNavigatorBackStack(rootState: NavigatorState): List<String> {
     val selfScreensIds = rootState
         .currentStack
@@ -167,26 +175,28 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
     routerProviderHolder: RouterProvidersHolder<*>,
     savedStateRegistry: SavedStateRegistry,
     navigator: Navigator,
-    saveableStateHolder: SaveableStateHolder?
+    saveableStateHolder: SaveableStateHolder?,
+    persistentScreenIds: () -> Set<String>,
 ) {
     launch(Dispatchers.Main.immediate) {
         navigator
             .stateFlow
             .drop(1)
-            .filterNot { it.withAnimation }
+            .filterNot { it.hasActiveAnimations() }
             .map(::flattenNavigatorBackStack)
             .map { screenIds ->
+                val persistentIds = persistentScreenIds()
                 val openedScopes = openedScopesHolder.openedScopes
                 Log.d(
                     "NavigatorExt",
                     "subscribeToNavigatorAndCleanUnusedData. map ids=${screenIds.joinToString()}, openedScopes=${openedScopes.joinToString()}"
                 )
                 screenIds.toSet() to openedScopes
-                    .filterNot { screenIds.contains(it) }
+                    .filterNot { screenIds.contains(it) || persistentIds.contains(it) }
                     .toSet()
             }
             .collect { data ->
-                val openedScreens = data.first
+                val openedScreens = data.first + persistentScreenIds()
                 val scopesToClose = data.second
                 val closedVmScreens = vmStoreHolder.clearForUnusedScreens(openedScreens)
                 (closedVmScreens + scopesToClose).forEach {
