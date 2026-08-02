@@ -1,7 +1,6 @@
 package ru.wearemad.mad_koin_compose.router
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -32,6 +31,7 @@ import ru.wearemad.mad_compose_navigation.api.router.RouterProvidersHolder
 import ru.wearemad.mad_core_compose.utils.rememberLifecycleObserver
 import ru.wearemad.mad_core_compose.vm.vm_store_holder.ComposeScreenViewModelStoreHolder
 import ru.wearemad.mad_core_compose.vm.vm_store_holder.LocalComposeScreenViewModelStoreHolder
+import ru.wearemad.mad_koin_compose.logger.MadKoinComposeLogger
 import ru.wearemad.mad_koin_compose.scopes.LocalOpenedScopesHolder
 import ru.wearemad.mad_koin_compose.scopes.OpenedScopesHolder
 import ru.wearemad.mad_koin_compose.utils.LocalRootSaveableStateHolder
@@ -160,10 +160,10 @@ private fun NavigatorState.hasActiveAnimations(): Boolean =
 private fun flattenNavigatorBackStack(rootState: NavigatorState): List<String> {
     val selfScreensIds = rootState
         .currentStack
-        .map { it.screenKey } +
+        .map { it.instanceId } +
             rootState
                 .currentDialogsStack
-                .map { it.screenKey }
+                .map { it.instanceId }
     return selfScreensIds + rootState.nestedNavigatorsState
         .map { flattenNavigatorBackStack(it) }
         .flatten()
@@ -187,10 +187,9 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
             .map { screenIds ->
                 val persistentIds = persistentScreenIds()
                 val openedScopes = openedScopesHolder.openedScopes
-                Log.d(
-                    "NavigatorExt",
-                    "subscribeToNavigatorAndCleanUnusedData. map ids=${screenIds.joinToString()}, openedScopes=${openedScopes.joinToString()}"
-                )
+                MadKoinComposeLogger.d {
+                    "STACK ids=${screenIds.joinToString()} | opened=${openedScopes.joinToString()}"
+                }
                 screenIds.toSet() to openedScopes
                     .filterNot { screenIds.contains(it) || persistentIds.contains(it) }
                     .toSet()
@@ -199,16 +198,28 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
                 val openedScreens = data.first + persistentScreenIds()
                 val scopesToClose = data.second
                 val closedVmScreens = vmStoreHolder.clearForUnusedScreens(openedScreens)
-                (closedVmScreens + scopesToClose).forEach {
+                val toClean = (closedVmScreens + scopesToClose).toSet()
+                if (toClean.isNotEmpty()) {
+                    MadKoinComposeLogger.d { "CLEANUP ${toClean.size}: ${toClean.joinToString()}" }
+                }
+                toClean.forEach {
                     openedScopesHolder.removeScreenScope(it)
                     val scope = getKoin().getScopeOrNull(it)
                     if (scope?.isNotClosed() == true) {
                         scope.close()
+                        MadKoinComposeLogger.d { "CLOSE scope $it" }
+                    } else {
+                        MadKoinComposeLogger.d { "SKIP scope $it (missing or already closed)" }
                     }
                     routerProviderHolder.remove(it)
                     vmStoreHolder.clearScreenVmOwner(it)
                     savedStateRegistry.unregisterSavedStateProvider(it)
                     saveableStateHolder?.removeState(it)
+                }
+                if (toClean.isNotEmpty()) {
+                    MadKoinComposeLogger.d {
+                        "ALIVE ${openedScopesHolder.openedScopes.size}: ${openedScopesHolder.openedScopes.joinToString()}"
+                    }
                 }
             }
     }

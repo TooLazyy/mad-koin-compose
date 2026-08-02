@@ -3,6 +3,7 @@ package ru.wearemad.mad_koin_compose.screens.tabs_test.navigation
 import ru.wearemad.mad_compose_navigation.api.command.Command
 import ru.wearemad.mad_compose_navigation.api.command.CommandInput
 import ru.wearemad.mad_compose_navigation.api.command.CommandOutput
+import ru.wearemad.mad_compose_navigation.api.navigator.data.StackEntry
 import ru.wearemad.mad_compose_navigation.api.route.Route
 import ru.wearemad.mad_compose_navigation.impl.router.Router
 
@@ -21,7 +22,7 @@ class ReplaceTabCommand(
         when (currentTabPosition) {
             -1 -> {
                 //tab not present. add
-                newRoutesList.add(route)
+                newRoutesList.add(StackEntry.of(route))
             }
             newRoutesList.lastIndex -> {
                 //current tab is last already

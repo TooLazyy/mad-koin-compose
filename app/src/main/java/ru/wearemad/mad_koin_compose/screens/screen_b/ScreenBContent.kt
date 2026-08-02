@@ -48,7 +48,7 @@ fun ScreenBContent(id: String, args: Bundle?) {
         content = { nestedNavigator, vm ->
             Log.d("MIINE", "ScreenBContent: $id")
             val nestedState = nestedNavigator.stateFlow.collectAsState()
-            val currentRoute = nestedState.value.currentRoute
+            val currentEntry = nestedState.value.currentEntry
             val saveableStateHolder = LocalRootSaveableStateHolder.current
             Box(
                 modifier = Modifier
@@ -59,8 +59,8 @@ fun ScreenBContent(id: String, args: Bundle?) {
                     }
                     .padding(top = 190.dp)
             ) {
-                if (currentRoute != null) {
-                    saveableStateHolder?.RenderRouteWithSaveableStateHolder(currentRoute)
+                if (currentEntry != null) {
+                    saveableStateHolder?.RenderRouteWithSaveableStateHolder(currentEntry)
                 }
             }
         }

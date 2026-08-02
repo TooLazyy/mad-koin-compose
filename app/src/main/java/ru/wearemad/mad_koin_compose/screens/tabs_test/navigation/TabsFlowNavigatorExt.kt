@@ -6,11 +6,11 @@ import ru.wearemad.mad_koin_compose.screens.tabs_test.navigation.TabsFlowNavigat
 
 fun tabsFlowNavigatorFactory(
     canGoBack: Boolean = false
-): NestedNavigatorFactory = { screenId, parentInEventChannel ->
+): NestedNavigatorFactory = { instanceId, parentInEventChannel ->
     TabsFlowNavigator(
         DefaultNestedNavigatorParams(
             canGoBack = canGoBack,
-            screenId = screenId,
+            instanceId = instanceId,
             outEventsChannel = parentInEventChannel
         )
     )

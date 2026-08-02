@@ -36,7 +36,7 @@ fun TabsMainScreen(
         vmClass = TabsMainVm::class
     ) { nestedNavigator, vm ->
         val nestedState = nestedNavigator.stateFlow.collectAsState()
-        val currentRoute = nestedState.value.currentRoute
+        val currentEntry = nestedState.value.currentEntry
         val state = vm.stateFlow.collectAsState()
         val saveableStateHolder = LocalRootSaveableStateHolder.current
         Column(modifier = Modifier.fillMaxSize()) {
@@ -45,9 +45,9 @@ fun TabsMainScreen(
                     .fillMaxWidth()
                     .weight(1F)
             ) {
-                if (currentRoute != null) {
+                if (currentEntry != null) {
                     Crossfade(
-                        targetState = currentRoute,
+                        targetState = currentEntry,
                         animationSpec = tween(
                             durationMillis = 500
                         )

@@ -112,12 +112,12 @@ class MainActivity : AppCompatActivity() {
     ) {
         val rootNavigator = LocalRootNavigator.current
         val rootNavigatorState = rootNavigator.stateFlow.collectAsState()
-        val currentRoute = rootNavigatorState.value.currentRoute
+        val currentEntry = rootNavigatorState.value.currentEntry
         val dialogs = rootNavigatorState.value.currentDialogsStack
 
-        if (currentRoute != null) {
+        if (currentEntry != null) {
             val transition = updateTransition(
-                currentRoute,
+                currentEntry,
                 label = null,
             )
             transition.Crossfade(

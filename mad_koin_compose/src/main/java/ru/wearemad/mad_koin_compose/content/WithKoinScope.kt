@@ -21,6 +21,7 @@ import ru.wearemad.mad_core_compose.utils.SubscribeToLifecycle
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.event.VmEvent
 import ru.wearemad.mad_core_compose.vm.state.ViewState
+import ru.wearemad.mad_koin_compose.logger.MadKoinComposeLogger
 import ru.wearemad.mad_koin_compose.router.back_press.LocalRootBackPressedDispatcher
 import ru.wearemad.mad_koin_compose.router.rememberNestedNavigator
 import ru.wearemad.mad_koin_compose.scopes.LocalOpenedScopesHolder
@@ -173,12 +174,22 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
 private fun rememberScreenScope(screenId: String): Scope {
     val koin = getKoin()
     val scope = remember(screenId) {
+        val existing = koin.getScopeOrNull(screenId)
+        MadKoinComposeLogger.d {
+            if (existing == null) "CREATE scope $screenId" else "REUSE scope $screenId (closed=${existing.closed})"
+        }
         koin.getOrCreateScope<ScreenScope>(screenId)
+    }
+    if (scope.closed) {
+        MadKoinComposeLogger.e { "USING CLOSED SCOPE $screenId" }
     }
     val openedScopesHolder = LocalOpenedScopesHolder.current
     DisposableEffect(screenId) {
         openedScopesHolder.addScreenScope(screenId)
-        onDispose { }
+        MadKoinComposeLogger.d { "ENTER composition $screenId, opened=${openedScopesHolder.openedScopes.size}" }
+        onDispose {
+            MadKoinComposeLogger.d { "LEAVE composition $screenId" }
+        }
     }
     return scope
 }

@@ -42,14 +42,14 @@ val navigationModule = module {
 
 private fun appNestedNavigatorFactory(
     canGoBack: Boolean = false
-): NestedNavigatorFactory = { screenId, parentInEventChannel ->
-    if (screenId.contains("TabsMainRoute")) {
-        tabsFlowNavigatorFactory(canGoBack).invoke(screenId, parentInEventChannel)
+): NestedNavigatorFactory = { instanceId, parentInEventChannel ->
+    if (instanceId.contains("TabsMainRoute")) {
+        tabsFlowNavigatorFactory(canGoBack).invoke(instanceId, parentInEventChannel)
     } else {
         AppNestedNavigator(
             DefaultNestedNavigatorParams(
                 canGoBack = canGoBack,
-                screenId = screenId,
+                instanceId = instanceId,
                 outEventsChannel = parentInEventChannel
             )
         )
