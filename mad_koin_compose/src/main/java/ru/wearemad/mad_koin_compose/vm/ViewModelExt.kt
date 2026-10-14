@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.DEFAULT_ARGS_KEY
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
 import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,7 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 import org.koin.viewmodel.resolveViewModel
 import ru.wearemad.mad_core_compose.vm.vm_store_holder.LocalComposeScreenViewModelStoreHolder
+import ru.wearemad.mad_core_compose.vm.vm_store_owner.ComposeScreenViewModelStoreOwner
 import kotlin.reflect.KClass
 
 @OptIn(KoinInternalApi::class)
@@ -44,12 +46,22 @@ fun <T : ViewModel> Scope.getScopedViewModelByClass(
             vmClass = vmClass,
             viewModelStore = owner.viewModelStore,
             key = viewModelId,
-            extras = buildExtras(owner, registryOwner),
+            extras = buildExtras(owner, owner.attachSavedStateTo(registryOwner)),
             qualifier = qualifier,
             scope = this,
             parameters = parameters,
         )
     }
+}
+
+private fun ViewModelStoreOwner.attachSavedStateTo(
+    parentRegistryOwner: SavedStateRegistryOwner?,
+): SavedStateRegistryOwner? {
+    if (this !is ComposeScreenViewModelStoreOwner || parentRegistryOwner == null) {
+        return parentRegistryOwner
+    }
+    attachToParentRegistry(parentRegistryOwner.savedStateRegistry)
+    return takeIf { lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED) } ?: parentRegistryOwner
 }
 
 private fun buildExtras(

@@ -214,6 +214,7 @@ private fun CoroutineScope.subscribeToNavigatorAndCleanUnusedData(
                     routerProviderHolder.remove(it)
                     vmStoreHolder.clearScreenVmOwner(it)
                     savedStateRegistry.unregisterSavedStateProvider(it)
+                    savedStateRegistry.consumeRestoredStateForKey(it)
                     saveableStateHolder?.removeState(it)
                 }
                 if (toClean.isNotEmpty()) {

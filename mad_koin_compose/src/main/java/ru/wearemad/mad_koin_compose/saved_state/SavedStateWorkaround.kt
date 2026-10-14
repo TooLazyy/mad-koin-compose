@@ -15,7 +15,9 @@ import ru.wearemad.mad_koin_compose.utils.FlagWasCreatedBefore
  *
  * This library, is tied to system "save instance" calls.
  *
- * So I need this hack to keep screens and scopes alive when pressing back button on pre-13
+ * So I need this hack to restore the navigation stack when pressing back button on pre-13.
+ * Screen scopes and vms are not kept: the finishing activity clears its ViewModelStore,
+ * which closes every screen scope, so restored screens get fresh scopes and vms.
  */
 object SavedStateWorkaround {
 

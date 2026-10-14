@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import ru.wearemad.mad_compose_navigation.api.router.RouterProvidersHolder
 import ru.wearemad.mad_core_compose.vm.vm_store_holder.ComposeScreenViewModelStoreHolder
@@ -39,6 +40,10 @@ fun ComponentActivity.ActivityContentWithProviders(
     saveableStateHolder: SaveableStateHolder,
     content: @Composable () -> Unit
 ) {
+    DisposableEffect(composeScreenViewModelStoreHolder, savedStateRegistry) {
+        composeScreenViewModelStoreHolder.attachToParentRegistry(savedStateRegistry)
+        onDispose { }
+    }
     CompositionLocalProvider(
         LocalRootBackPressedDispatcher provides backPressedDispatcher,
         LocalComposeScreenViewModelStoreHolder provides composeScreenViewModelStoreHolder,

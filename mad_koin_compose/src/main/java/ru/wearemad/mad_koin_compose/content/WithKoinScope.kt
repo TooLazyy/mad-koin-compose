@@ -21,11 +21,13 @@ import ru.wearemad.mad_core_compose.utils.SubscribeToLifecycle
 import ru.wearemad.mad_core_compose.vm.core.BaseVm
 import ru.wearemad.mad_core_compose.vm.event.VmEvent
 import ru.wearemad.mad_core_compose.vm.state.ViewState
+import ru.wearemad.mad_core_compose.vm.vm_store_holder.LocalComposeScreenViewModelStoreHolder
 import ru.wearemad.mad_koin_compose.logger.MadKoinComposeLogger
 import ru.wearemad.mad_koin_compose.router.back_press.LocalRootBackPressedDispatcher
 import ru.wearemad.mad_koin_compose.router.rememberNestedNavigator
 import ru.wearemad.mad_koin_compose.scopes.LocalOpenedScopesHolder
 import ru.wearemad.mad_koin_compose.scopes.ScreenScope
+import ru.wearemad.mad_koin_compose.scopes.ScreenScopeCloseable
 import ru.wearemad.mad_koin_compose.vm.getScopedViewModelByClass
 import kotlin.reflect.KClass
 
@@ -173,12 +175,17 @@ fun <State : ViewState, Event : VmEvent, Vm : BaseVm<State, Event>> WithKoinScop
 @Composable
 private fun rememberScreenScope(screenId: String): Scope {
     val koin = getKoin()
-    val scope = remember(screenId) {
+    val vmStoreHolder = LocalComposeScreenViewModelStoreHolder.current
+    val scope = remember(screenId, vmStoreHolder) {
         val existing = koin.getScopeOrNull(screenId)
         MadKoinComposeLogger.d {
             if (existing == null) "CREATE scope $screenId" else "REUSE scope $screenId (closed=${existing.closed})"
         }
-        koin.getOrCreateScope<ScreenScope>(screenId)
+        koin.getOrCreateScope<ScreenScope>(screenId).also {
+            vmStoreHolder
+                .getOrCreateScreenVmOwner(screenId)
+                .addCloseable(ScreenScopeCloseable.KEY, ScreenScopeCloseable(koin, screenId))
+        }
     }
     if (scope.closed) {
         MadKoinComposeLogger.e { "USING CLOSED SCOPE $screenId" }
